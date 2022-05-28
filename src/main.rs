@@ -2,6 +2,7 @@
 //! are propagated to their descendants.
 
 use bevy::prelude::*;
+use rand::Rng;
 
 fn main() {
     App::new()
@@ -16,6 +17,8 @@ fn main() {
 struct CaterpillarHead {
     pub speed: f32,
     pub next: Option<Entity>,
+    pub manually_controlled: bool,
+    pub frames: i32,
 }
 
 #[derive(Component)]
@@ -29,18 +32,33 @@ fn caterpillar_system(
     mut query: Query<(&mut Transform, &mut CaterpillarHead), Without<CaterpillarPart>>,
     mut part_query: Query<(&mut Transform, &mut CaterpillarPart), Without<CaterpillarHead>>,
 ) {
-    for (mut transform, caterpillar) in query.iter_mut() {
+    for (mut transform, mut caterpillar) in query.iter_mut() {
         let direction;
-        if keyboard_input.pressed(KeyCode::A) {
-            direction = transform.left();
-        } else if keyboard_input.pressed(KeyCode::D) {
-            direction = transform.right();
-        } else if keyboard_input.pressed(KeyCode::W) {
-            direction = transform.forward();
-        } else if keyboard_input.pressed(KeyCode::S) {
-            direction = transform.back();
+
+        if caterpillar.manually_controlled {
+            if keyboard_input.pressed(KeyCode::A) {
+                direction = transform.left();
+            } else if keyboard_input.pressed(KeyCode::D) {
+                direction = transform.right();
+            } else if keyboard_input.pressed(KeyCode::W) {
+                direction = transform.forward();
+            } else if keyboard_input.pressed(KeyCode::S) {
+                direction = transform.back();
+            } else {
+                continue;
+            }
         } else {
-            continue;
+            //println!("frames {}", caterpillar.frames);
+            if caterpillar.frames == 0 {
+                let mut angle = rand::random();
+                angle *= 2.0 * std::f32::consts::PI; // rng.gen<f32>();
+                transform.rotate(Quat::from_rotation_y(angle));
+                println!("rotation {angle}");
+
+                caterpillar.frames = rand::thread_rng().gen_range(10..500);
+            }
+            direction = transform.forward();
+            caterpillar.frames = caterpillar.frames - 1;
         }
 
         transform.translation += direction * caterpillar.speed * time.delta_seconds();
@@ -131,6 +149,8 @@ fn setup_caterpillars(
         .insert(CaterpillarHead {
             speed: 1.5,
             next: part_entity_option,
+            manually_controlled: false,
+            frames: 0
         });
     // light
     commands.spawn_bundle(PointLightBundle {
