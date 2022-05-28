@@ -13,16 +13,36 @@ fn main() {
 }
 
 #[derive(Component)]
-struct Caterpillar {
+struct CaterpillarHead {
     pub parts: Vec<i32>,
     pub speed: f32,
+    pub next: Option<CaterpillarPart>,
 }
 
-fn caterpillar_system(time: Res<Time>, mut query: Query<(&mut Transform, &mut Caterpillar)>) {
+#[derive(Component)]
+struct CaterpillarPart {
+    pub next: Box<CaterpillarPart>,
+}
+
+fn caterpillar_system(keyboard_input: Res<Input<KeyCode>>, time: Res<Time>, mut query: Query<(&mut Transform, &mut CaterpillarHead)>) {
+    
     for (mut transform, mut caterpillar) in query.iter_mut() {
         //transform.rotation *= Quat::from_rotation_x(3.0 * time.delta_seconds());
-        let fwd = transform.forward();
-        transform.translation += fwd * caterpillar.speed * time.delta_seconds();
+        let mut direction = Vec3::new(0.0, 0.0, 0.0);
+        if keyboard_input.pressed(KeyCode::A) {
+            direction = transform.left();
+        }
+        if keyboard_input.pressed(KeyCode::D) {
+            direction = transform.right();
+        }
+        if keyboard_input.pressed(KeyCode::W) {
+            direction = transform.forward();
+        }
+        if keyboard_input.pressed(KeyCode::S) {
+            direction = transform.back();
+        }
+        
+        transform.translation += direction * caterpillar.speed * time.delta_seconds();
     }
 }
 
@@ -49,11 +69,12 @@ fn setup_caterpillars(
             transform: Transform::from_xyz(0.0, 0.0, 1.0),
             ..default()
         })
-        .insert(Caterpillar {
+        .insert(CaterpillarHead {
             parts: vec![1, 0, 3],
-            speed: 0.5,
-        })
-        .with_children(|parent| {
+            speed: 1.5,
+            next: Option::None,
+        });
+        /*.with_children(|parent| {
             // child cube
             parent.spawn_bundle(PbrBundle {
                 mesh: sphere_handle.clone(),
@@ -80,6 +101,7 @@ fn setup_caterpillars(
                 ..default()
             });
         });
+        */
     // light
     commands.spawn_bundle(PointLightBundle {
         transform: Transform::from_xyz(4.0, 5.0, -4.0),
