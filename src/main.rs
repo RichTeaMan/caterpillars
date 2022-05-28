@@ -48,12 +48,10 @@ fn caterpillar_system(
                 continue;
             }
         } else {
-            //println!("frames {}", caterpillar.frames);
             if caterpillar.frames == 0 {
                 let mut angle = rand::random();
-                angle *= 2.0 * std::f32::consts::PI; // rng.gen<f32>();
+                angle *= 2.0 * std::f32::consts::PI;
                 transform.rotate(Quat::from_rotation_y(angle));
-                println!("rotation {angle}");
 
                 caterpillar.frames = rand::thread_rng().gen_range(10..500);
             }
@@ -118,40 +116,44 @@ fn setup_caterpillars(
         ..default()
     });
 
-    let mut part_entity_option: Option<Entity> = Option::None;
-    for _ in 1..5 {
-        let caterpillar_part = CaterpillarPart {
-            next: part_entity_option,
-        };
+    for _ in 1..20 {
+        let mut part_entity_option: Option<Entity> = Option::None;
 
-        let part_entity = commands
+        let length = rand::thread_rng().gen_range(3..20);
+        for _ in 1..length {
+            let caterpillar_part = CaterpillarPart {
+                next: part_entity_option,
+            };
+
+            let part_entity = commands
+                .spawn_bundle(PbrBundle {
+                    mesh: sphere_handle.clone(),
+                    material: sphere_material_handle.clone(),
+                    transform: Transform::from_xyz(0.0, 0.0, 1.0),
+                    ..default()
+                })
+                .insert(caterpillar_part)
+                .id()
+                .clone();
+
+            part_entity_option = Option::from(part_entity);
+        }
+
+        // parent sphere
+        commands
             .spawn_bundle(PbrBundle {
-                mesh: sphere_handle.clone(),
-                material: sphere_material_handle.clone(),
+                mesh: head_sphere_handle.clone(),
+                material: head_material_handle.clone(),
                 transform: Transform::from_xyz(0.0, 0.0, 1.0),
                 ..default()
             })
-            .insert(caterpillar_part)
-            .id()
-            .clone();
-
-        part_entity_option = Option::from(part_entity);
+            .insert(CaterpillarHead {
+                speed: 1.5,
+                next: part_entity_option,
+                manually_controlled: false,
+                frames: 0,
+            });
     }
-
-    // parent sphere
-    commands
-        .spawn_bundle(PbrBundle {
-            mesh: head_sphere_handle.clone(),
-            material: head_material_handle.clone(),
-            transform: Transform::from_xyz(0.0, 0.0, 1.0),
-            ..default()
-        })
-        .insert(CaterpillarHead {
-            speed: 1.5,
-            next: part_entity_option,
-            manually_controlled: false,
-            frames: 0
-        });
     // light
     commands.spawn_bundle(PointLightBundle {
         transform: Transform::from_xyz(4.0, 5.0, -4.0),
