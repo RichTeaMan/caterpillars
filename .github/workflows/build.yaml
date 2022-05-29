@@ -20,7 +20,7 @@ jobs:
       - name: Archive artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: linux-dist
+          name: caterpillars-linux-dist
           path: |
             target/release/caterpillars
   build_and_test_windows:
@@ -38,6 +38,30 @@ jobs:
       - name: Archive artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: windows-dist
+          name: caterpillars-windows-dist
           path: |
             target/release/caterpillars.exe
+  build_and_test_wasm:
+    name: CaterpillarsWasm
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - name: Install dev dependencies
+        run: sudo apt-get install -y libasound2-dev portaudio19-dev build-essential libpulse-dev libdbus-1-dev g++ pkg-config libx11-dev libasound2-dev libudev-dev
+      - name: Install cargo dependencies
+        run: rustup target install wasm32-unknown-unknown && cargo install wasm-server-runner wasm-bindgen-cli
+      - uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release --all-features --target wasm32-unknown-unknown
+      - name: Wasm binding
+        run: wasm-bindgen --out-dir ./docs/ --target web target/wasm32-unknown-unknown/release/caterpillars.wasm
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: caterpillars-wasm-dist
+          path: |
+            docs/
