@@ -108,12 +108,21 @@ fn setup_caterpillars(
         sectors: 16,
         stacks: 16,
     }));
+    let foot_sphere_handle = meshes.add(Mesh::from(shape::UVSphere {
+        radius: 0.25,
+        sectors: 6,
+        stacks: 6,
+    }));
     let head_material_handle = materials.add(StandardMaterial {
         base_color: Color::rgb(1.0, 0.0, 0.0),
         ..default()
     });
     let sphere_material_handle = materials.add(StandardMaterial {
         base_color: Color::rgb(0.8, 0.7, 0.6),
+        ..default()
+    });
+    let foot_sphere_material_handle = materials.add(StandardMaterial {
+        base_color: Color::rgb(0.0, 0.0, 0.0),
         ..default()
     });
 
@@ -134,6 +143,21 @@ fn setup_caterpillars(
                     ..default()
                 })
                 .insert(caterpillar_part)
+                .with_children(|parent| {
+                    // child cube
+                    parent.spawn_bundle(PbrBundle {
+                        mesh: foot_sphere_handle.clone(),
+                        material: foot_sphere_material_handle.clone(),
+                        transform: Transform::from_xyz(3.5, -2.0, 0.0),
+                        ..default()
+                    });
+                    parent.spawn_bundle(PbrBundle {
+                        mesh: foot_sphere_handle.clone(),
+                        material: foot_sphere_material_handle.clone(),
+                        transform: Transform::from_xyz(-3.5, -2.0, 0.0),
+                        ..default()
+                    });
+                })
                 .id()
                 .clone();
 
