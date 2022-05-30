@@ -25,10 +25,12 @@ pub fn caterpillar_system(
 
         if caterpillar.manually_controlled {
             if keyboard_input.pressed(KeyCode::A) {
-                direction = transform.left();
+                transform.rotate(Quat::from_rotation_y(0.2));
             } else if keyboard_input.pressed(KeyCode::D) {
-                direction = transform.right();
-            } else if keyboard_input.pressed(KeyCode::W) {
+                transform.rotate(Quat::from_rotation_y(-0.2));
+            }
+
+            if keyboard_input.pressed(KeyCode::W) {
                 direction = transform.forward();
             } else if keyboard_input.pressed(KeyCode::S) {
                 direction = transform.back();
@@ -85,13 +87,25 @@ pub fn setup_caterpillars(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
+    let head_radius = 2.0;
+    let body_radius = 1.5;
     let head_sphere_handle = meshes.add(Mesh::from(shape::UVSphere {
-        radius: 2.0,
+        radius: head_radius,
+        sectors: 16,
+        stacks: 16,
+    }));
+    let eye_sphere_handle = meshes.add(Mesh::from(shape::UVSphere {
+        radius: 0.25,
+        sectors: 16,
+        stacks: 16,
+    }));
+    let nose_sphere_handle = meshes.add(Mesh::from(shape::UVSphere {
+        radius: 0.5,
         sectors: 16,
         stacks: 16,
     }));
     let sphere_handle = meshes.add(Mesh::from(shape::UVSphere {
-        radius: 1.5,
+        radius: body_radius,
         sectors: 16,
         stacks: 16,
     }));
@@ -104,6 +118,15 @@ pub fn setup_caterpillars(
         base_color: Color::rgb(1.0, 0.0, 0.0),
         ..default()
     });
+
+    let eye_material_handle = materials.add(StandardMaterial {
+        base_color: Color::rgb(0.0, 0.0, 0.0),
+        ..default()
+    });
+    let nose_material_handle = materials.add(StandardMaterial {
+        base_color: Color::rgb(1.0, 0.0, 1.0),
+        ..default()
+    });
     let sphere_material_handle = materials.add(StandardMaterial {
         base_color: Color::rgb(0.8, 0.7, 0.6),
         ..default()
@@ -113,8 +136,8 @@ pub fn setup_caterpillars(
         ..default()
     });
 
-    for _ in 1..config::STARTING_CATERPILLARS {
-        let mut starting_vec = random::vec3(100.0);
+    for _ in 0..config::STARTING_CATERPILLARS {
+        let mut starting_vec = random::vec3(config::STARTING_CATERPILLAR_RADIUS);
         starting_vec.y = 3.0;
         let starting_transform = Transform::default().with_translation(starting_vec);
 
@@ -174,6 +197,31 @@ pub fn setup_caterpillars(
                 next: part_entity_option,
                 manually_controlled: false,
                 frames: 0,
+            })
+            .with_children(|parent| {
+                // nose
+                parent.spawn_bundle(PbrBundle {
+                    mesh: nose_sphere_handle.clone(),
+                    material: nose_material_handle.clone(),
+                    transform: Transform::from_xyz(0.0, 0.0, -head_radius),
+                    ..default()
+                });
+                let eye_offset_x = (head_radius / 2.0) - 0.3;
+                let eye_offset_y = head_radius / 2.0;
+                // left eye
+                parent.spawn_bundle(PbrBundle {
+                    mesh: eye_sphere_handle.clone(),
+                    material: eye_material_handle.clone(),
+                    transform: Transform::from_xyz(eye_offset_x, eye_offset_y, -(head_radius - 0.5)),
+                    ..default()
+                });
+                // right eye
+                parent.spawn_bundle(PbrBundle {
+                    mesh: eye_sphere_handle.clone(),
+                    material: eye_material_handle.clone(),
+                    transform: Transform::from_xyz(-eye_offset_x, eye_offset_y, -(head_radius - 0.5)),
+                    ..default()
+                });
             });
     }
 }

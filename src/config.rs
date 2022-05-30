@@ -1,6 +1,8 @@
 /** Starting caterpillars.  */
 pub const STARTING_CATERPILLARS: i32 = 20;
 
+pub const STARTING_CATERPILLAR_RADIUS: f32 = 100.0;
+
 /** Minimum length of a caterpillar. */
 pub const CATERPILLAR_MIN_LENGTH: i32 = 3;
 
