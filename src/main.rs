@@ -1,7 +1,8 @@
 mod camera;
+mod config;
+mod random;
 
 use bevy::prelude::*;
-use rand::Rng;
 
 fn main() {
     App::new()
@@ -55,7 +56,7 @@ fn caterpillar_system(
                 angle *= 2.0 * std::f32::consts::PI;
                 transform.rotate(Quat::from_rotation_y(angle));
 
-                caterpillar.frames = rand::thread_rng().gen_range(10..500);
+                caterpillar.frames = random::range_i32(10, 500);
             }
             direction = transform.forward();
             caterpillar.frames = caterpillar.frames - 1;
@@ -140,10 +141,10 @@ fn setup_caterpillars(
         ..default()
     });
 
-    for _ in 1..20 {
+    for _ in 1..config::STARTING_CATERPILLARS {
         let mut part_entity_option: Option<Entity> = Option::None;
 
-        let length = rand::thread_rng().gen_range(3..20);
+        let length = random::range_i32(config::CATERPILLAR_MIN_LENGTH, config::CATERPILLAR_MAX_LENGTH);
         for _ in 1..length {
             let caterpillar_part = CaterpillarPart {
                 next: part_entity_option,
@@ -161,7 +162,7 @@ fn setup_caterpillars(
                     // child cube
                     parent.spawn_bundle(PbrBundle {
                         mesh: foot_sphere_handle.clone(),
-                        material: foot_sphere_material_handle.clone(),
+                        material: foot_sphere_material_handle.clone(), 
                         transform: Transform::from_xyz(3.5, -2.0, 0.0),
                         ..default()
                     });
@@ -187,7 +188,7 @@ fn setup_caterpillars(
                 ..default()
             })
             .insert(CaterpillarHead {
-                speed: 1.5,
+                speed: random::range_f32(config::CATERPILLAR_MIN_SPEED, config::CATERPILLAR_MAX_SPEED),
                 next: part_entity_option,
                 manually_controlled: false,
                 frames: 0,
