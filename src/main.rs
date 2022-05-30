@@ -99,6 +99,19 @@ fn setup_caterpillars(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
+    let ground_plane_handle = meshes.add(Mesh::from(shape::Plane { size: 5000.0 }));
+
+    let ground_material_handle = materials.add(StandardMaterial {
+        base_color: Color::rgb(0.33, 0.49, 0.27),
+        ..default()
+    });
+    commands.spawn_bundle(PbrBundle {
+        mesh: ground_plane_handle,
+        material: ground_material_handle,
+        transform: Transform::from_xyz(0.0, 0.0, 0.0),
+        ..default()
+    });
+
     let head_sphere_handle = meshes.add(Mesh::from(shape::UVSphere {
         radius: 2.0,
         sectors: 16,
@@ -140,7 +153,7 @@ fn setup_caterpillars(
                 .spawn_bundle(PbrBundle {
                     mesh: sphere_handle.clone(),
                     material: sphere_material_handle.clone(),
-                    transform: Transform::from_xyz(0.0, 0.0, 1.0),
+                    transform: Transform::from_xyz(0.0, 3.0, 0.0),
                     ..default()
                 })
                 .insert(caterpillar_part)
@@ -170,7 +183,7 @@ fn setup_caterpillars(
             .spawn_bundle(PbrBundle {
                 mesh: head_sphere_handle.clone(),
                 material: head_material_handle.clone(),
-                transform: Transform::from_xyz(0.0, 0.0, 1.0),
+                transform: Transform::from_xyz(0.0, 3.0, 0.0),
                 ..default()
             })
             .insert(CaterpillarHead {
@@ -181,19 +194,8 @@ fn setup_caterpillars(
             });
     }
     // directional 'sun' light
-    const HALF_SIZE: f32 = 10.0;
     commands.spawn_bundle(DirectionalLightBundle {
         directional_light: DirectionalLight {
-            // Configure the projection to better fit the scene
-            shadow_projection: OrthographicProjection {
-                left: -HALF_SIZE,
-                right: HALF_SIZE,
-                bottom: -HALF_SIZE,
-                top: HALF_SIZE,
-                near: -10.0 * HALF_SIZE,
-                far: 10.0 * HALF_SIZE,
-                ..default()
-            },
             shadows_enabled: true,
             ..default()
         },
