@@ -1,7 +1,7 @@
 mod camera;
+mod caterpillar;
 mod config;
 mod random;
-mod caterpillar;
 
 use bevy::prelude::*;
 

@@ -1,3 +1,4 @@
+use bevy::math::Vec3;
 use rand::Rng;
 
 /**
@@ -12,4 +13,15 @@ pub fn range_f32(min: f32, max: f32) -> f32 {
  */
 pub fn range_i32(min: i32, max: i32) -> i32 {
     return rand::thread_rng().gen_range(min..max);
+}
+
+/**
+ * Gets a random vector. All components will be randomised between +/- radius from origin.
+ */
+pub fn vec3(radius: f32) -> Vec3 {
+    return Vec3::new(
+        range_f32(-radius, radius),
+        range_f32(-radius, radius),
+        range_f32(-radius, radius),
+    );
 }

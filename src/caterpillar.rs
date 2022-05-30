@@ -1,5 +1,5 @@
+use crate::{config, random};
 use bevy::prelude::*;
-use crate::{random, config};
 
 #[derive(Component)]
 pub struct CaterpillarHead {
@@ -114,9 +114,16 @@ pub fn setup_caterpillars(
     });
 
     for _ in 1..config::STARTING_CATERPILLARS {
+        let mut starting_vec = random::vec3(100.0);
+        starting_vec.y = 3.0;
+        let starting_transform = Transform::default().with_translation(starting_vec);
+
         let mut part_entity_option: Option<Entity> = Option::None;
 
-        let length = random::range_i32(config::CATERPILLAR_MIN_LENGTH, config::CATERPILLAR_MAX_LENGTH);
+        let length = random::range_i32(
+            config::CATERPILLAR_MIN_LENGTH,
+            config::CATERPILLAR_MAX_LENGTH,
+        );
         for _ in 1..length {
             let caterpillar_part = CaterpillarPart {
                 next: part_entity_option,
@@ -126,15 +133,15 @@ pub fn setup_caterpillars(
                 .spawn_bundle(PbrBundle {
                     mesh: sphere_handle.clone(),
                     material: sphere_material_handle.clone(),
-                    transform: Transform::from_xyz(0.0, 3.0, 0.0),
+                    transform: starting_transform.clone(),
                     ..default()
                 })
                 .insert(caterpillar_part)
                 .with_children(|parent| {
-                    // child cube
+                    // body spheres
                     parent.spawn_bundle(PbrBundle {
                         mesh: foot_sphere_handle.clone(),
-                        material: foot_sphere_material_handle.clone(), 
+                        material: foot_sphere_material_handle.clone(),
                         transform: Transform::from_xyz(3.5, -2.0, 0.0),
                         ..default()
                     });
@@ -156,11 +163,14 @@ pub fn setup_caterpillars(
             .spawn_bundle(PbrBundle {
                 mesh: head_sphere_handle.clone(),
                 material: head_material_handle.clone(),
-                transform: Transform::from_xyz(0.0, 3.0, 0.0),
+                transform: starting_transform,
                 ..default()
             })
             .insert(CaterpillarHead {
-                speed: random::range_f32(config::CATERPILLAR_MIN_SPEED, config::CATERPILLAR_MAX_SPEED),
+                speed: random::range_f32(
+                    config::CATERPILLAR_MIN_SPEED,
+                    config::CATERPILLAR_MAX_SPEED,
+                ),
                 next: part_entity_option,
                 manually_controlled: false,
                 frames: 0,
