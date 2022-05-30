@@ -6,6 +6,7 @@ use rand::Rng;
 fn main() {
     App::new()
         .insert_resource(Msaa { samples: 4 })
+        .insert_resource(ClearColor(Color::rgb(0.53, 0.80, 0.92)))
         .add_plugins(DefaultPlugins)
         .add_startup_system(setup_caterpillars)
         .add_startup_system(camera::spawn_camera)
