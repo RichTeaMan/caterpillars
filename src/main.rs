@@ -1,7 +1,9 @@
 mod camera;
 mod caterpillar;
+mod collision;
 mod config;
 mod random;
+mod walls;
 
 use bevy::prelude::*;
 
@@ -11,10 +13,12 @@ fn main() {
         .insert_resource(ClearColor(Color::rgb(0.53, 0.80, 0.92)))
         .add_plugins(DefaultPlugins)
         .add_startup_system(setup_scene)
+        .add_startup_system(walls::setup_walls)
         .add_startup_system(caterpillar::setup_caterpillars)
         .add_startup_system(camera::spawn_camera)
         .add_system(caterpillar::caterpillar_system)
         .add_system(camera::pan_orbit_camera)
+        .add_system(collision::collision_system)
         .run();
 }
 
