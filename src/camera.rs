@@ -19,7 +19,7 @@ impl Default for PanOrbitCamera {
     fn default() -> Self {
         PanOrbitCamera {
             focus: Vec3::ZERO,
-            radius: 5.0,
+            radius: 250.0,
             upside_down: false,
         }
     }
@@ -121,16 +121,21 @@ pub fn get_primary_window_size(windows: &Res<Windows>) -> Vec2 {
 
 /// Spawn a camera like this
 pub fn spawn_camera(mut commands: Commands) {
-    let translation = Vec3::new(-2.0, 2.5, 5.0);
-    let radius = translation.length();
+    let translation = Vec3::new(-12.0, 12.5, 5.0);
+
+    let pan_orbit = PanOrbitCamera {
+        ..Default::default()
+    };
+
+    let mut start_transform = Transform::from_translation(translation).looking_at(Vec3::ZERO, Vec3::Y);
+    let rot_matrix = Mat3::from_quat(start_transform.rotation);
+    start_transform.translation =
+                pan_orbit.focus + rot_matrix.mul_vec3(Vec3::new(0.0, 0.0, pan_orbit.radius));
 
     commands
         .spawn_bundle(PerspectiveCameraBundle {
-            transform: Transform::from_translation(translation).looking_at(Vec3::ZERO, Vec3::Y),
+            transform: start_transform,
             ..Default::default()
         })
-        .insert(PanOrbitCamera {
-            radius,
-            ..Default::default()
-        });
+        .insert(pan_orbit);
 }
