@@ -1,7 +1,12 @@
+
+pub const PLANE_SIZE: f32 = 5000.0;
+
 /** Starting caterpillars.  */
 pub const STARTING_CATERPILLARS: i32 = 20;
 
 pub const STARTING_CATERPILLAR_RADIUS: f32 = 100.0;
+
+pub const STARTING_FOLIAGE: i32 = 200;
 
 /** Minimum length of a caterpillar. */
 pub const CATERPILLAR_MIN_LENGTH: i32 = 3;
