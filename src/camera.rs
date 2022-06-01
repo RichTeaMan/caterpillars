@@ -127,10 +127,11 @@ pub fn spawn_camera(mut commands: Commands) {
         ..Default::default()
     };
 
-    let mut start_transform = Transform::from_translation(translation).looking_at(Vec3::ZERO, Vec3::Y);
+    let mut start_transform =
+        Transform::from_translation(translation).looking_at(Vec3::ZERO, Vec3::Y);
     let rot_matrix = Mat3::from_quat(start_transform.rotation);
     start_transform.translation =
-                pan_orbit.focus + rot_matrix.mul_vec3(Vec3::new(0.0, 0.0, pan_orbit.radius));
+        pan_orbit.focus + rot_matrix.mul_vec3(Vec3::new(0.0, 0.0, pan_orbit.radius));
 
     commands
         .spawn_bundle(PerspectiveCameraBundle {

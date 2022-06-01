@@ -18,8 +18,7 @@ pub fn setup_foliage(
         starting_vec.y = tree_height / 2.0;
         let starting_transform = Transform::default().with_translation(starting_vec);
 
-        commands
-        .spawn_bundle(PbrBundle {
+        commands.spawn_bundle(PbrBundle {
             mesh: tree_box_handle.clone(),
             material: tree_material_handle.clone(),
             transform: starting_transform,

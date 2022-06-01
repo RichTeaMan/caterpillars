@@ -212,14 +212,22 @@ pub fn setup_caterpillars(
                 parent.spawn_bundle(PbrBundle {
                     mesh: eye_sphere_handle.clone(),
                     material: eye_material_handle.clone(),
-                    transform: Transform::from_xyz(eye_offset_x, eye_offset_y, -(head_radius - 0.5)),
+                    transform: Transform::from_xyz(
+                        eye_offset_x,
+                        eye_offset_y,
+                        -(head_radius - 0.5),
+                    ),
                     ..default()
                 });
                 // right eye
                 parent.spawn_bundle(PbrBundle {
                     mesh: eye_sphere_handle.clone(),
                     material: eye_material_handle.clone(),
-                    transform: Transform::from_xyz(-eye_offset_x, eye_offset_y, -(head_radius - 0.5)),
+                    transform: Transform::from_xyz(
+                        -eye_offset_x,
+                        eye_offset_y,
+                        -(head_radius - 0.5),
+                    ),
                     ..default()
                 });
             });

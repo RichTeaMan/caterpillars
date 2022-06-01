@@ -1,4 +1,3 @@
-
 pub const PLANE_SIZE: f32 = 5000.0;
 
 /** Starting caterpillars.  */

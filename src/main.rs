@@ -1,8 +1,8 @@
 mod camera;
 mod caterpillar;
 mod config;
-mod random;
 mod foliage;
+mod random;
 
 use bevy::prelude::*;
 
@@ -25,7 +25,9 @@ fn setup_scene(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
-    let ground_plane_handle = meshes.add(Mesh::from(shape::Plane { size: config::PLANE_SIZE }));
+    let ground_plane_handle = meshes.add(Mesh::from(shape::Plane {
+        size: config::PLANE_SIZE,
+    }));
 
     let ground_material_handle = materials.add(StandardMaterial {
         base_color: Color::rgb(0.33, 0.49, 0.27),
@@ -39,9 +41,19 @@ fn setup_scene(
     });
 
     // directional 'sun' light
+    const HALF_SIZE: f32 = config::PLANE_SIZE / 2.0;
     commands.spawn_bundle(DirectionalLightBundle {
         directional_light: DirectionalLight {
             shadows_enabled: true,
+            shadow_projection: OrthographicProjection {
+                left: -HALF_SIZE,
+                right: HALF_SIZE,
+                bottom: -HALF_SIZE,
+                top: HALF_SIZE,
+                near: -100.0 * HALF_SIZE,
+                far: 100.0 * HALF_SIZE,
+                ..default()
+            },
             ..default()
         },
         transform: Transform {
