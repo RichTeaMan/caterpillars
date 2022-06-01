@@ -31,6 +31,7 @@ fn setup_scene(
 
     let ground_material_handle = materials.add(StandardMaterial {
         base_color: Color::rgb(0.33, 0.49, 0.27),
+        perceptual_roughness: 1.0,
         ..default()
     });
     commands.spawn_bundle(PbrBundle {

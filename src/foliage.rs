@@ -11,6 +11,7 @@ pub fn setup_foliage(
     let tree_box_handle = meshes.add(Mesh::from(shape::Box::new(2.0, tree_height, 2.0)));
     let tree_material_handle = materials.add(StandardMaterial {
         base_color: Color::rgb(0.38, 0.23, 0.08),
+        perceptual_roughness: 1.0,
         ..default()
     });
     for _ in 0..config::STARTING_FOLIAGE {
