@@ -3,20 +3,23 @@ mod caterpillar;
 mod config;
 mod foliage;
 mod random;
+mod ui;
 
-use bevy::prelude::*;
+use bevy::{diagnostic::FrameTimeDiagnosticsPlugin, prelude::*};
 
 fn main() {
     App::new()
-        .insert_resource(Msaa { samples: 4 })
         .insert_resource(ClearColor(Color::rgb(0.53, 0.80, 0.92)))
         .add_plugins(DefaultPlugins)
+        .add_plugin(FrameTimeDiagnosticsPlugin)
         .add_startup_system(setup_scene)
         .add_startup_system(foliage::setup_foliage)
         .add_startup_system(caterpillar::setup_caterpillars)
         .add_startup_system(camera::spawn_camera)
+        .add_startup_system(ui::infotext_system)
         .add_system(caterpillar::caterpillar_system)
         .add_system(camera::pan_orbit_camera)
+        .add_system(ui::change_text_system)
         .run();
 }
 
