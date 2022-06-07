@@ -60,29 +60,19 @@ pub fn caterpillar_system(
         let mut caterpillar_part = caterpillar.next;
         let mut parent_transform = transform.translation;
 
-        loop {
-            match caterpillar_part {
-                Some(x) => {
-                    if let Ok((mut part_transform, part)) = part_query.get_mut(x) {
-                        let _ = part_transform.look_at(parent_transform, Vec3::Y);
+        while let Some(x) = caterpillar_part {
+            if let Ok((mut part_transform, part)) = part_query.get_mut(x) {
+                let _ = part_transform.look_at(parent_transform, Vec3::Y);
 
-                        let fwd = part_transform.forward();
+                let fwd = part_transform.forward();
 
-                        let distance = Vec3::distance(parent_transform, part_transform.translation);
-                        if distance > 3.0 {
-                            part_transform.translation +=
-                                fwd * caterpillar.speed * time.delta_seconds();
-                        }
-
-                        parent_transform = part_transform.translation;
-                        caterpillar_part = part.next;
-                    } else {
-                        break;
-                    }
+                let distance = Vec3::distance(parent_transform, part_transform.translation);
+                if distance > 3.0 {
+                    part_transform.translation += fwd * caterpillar.speed * time.delta_seconds();
                 }
-                None => {
-                    break;
-                }
+
+                parent_transform = part_transform.translation;
+                caterpillar_part = part.next;
             }
         }
     }

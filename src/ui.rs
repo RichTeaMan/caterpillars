@@ -80,7 +80,7 @@ pub fn infotext_system(mut commands: Commands, asset_server: Res<AssetServer>) {
         })
         .insert(NameUi);
 
-        commands
+    commands
         .spawn_bundle(TextBundle {
             style: Style {
                 align_self: AlignSelf::FlexEnd,
