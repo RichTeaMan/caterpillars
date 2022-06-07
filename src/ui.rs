@@ -12,6 +12,9 @@ pub struct TextChanges;
 pub struct NameUi;
 
 #[derive(Component)]
+pub struct DescriptionUi;
+
+#[derive(Component)]
 pub struct UiInformation {
     pub active_caterpillar_name: String,
 }
@@ -76,6 +79,33 @@ pub fn infotext_system(mut commands: Commands, asset_server: Res<AssetServer>) {
             ..default()
         })
         .insert(NameUi);
+
+        commands
+        .spawn_bundle(TextBundle {
+            style: Style {
+                align_self: AlignSelf::FlexEnd,
+                position_type: PositionType::Absolute,
+                position: Rect {
+                    top: Val::Px(330.0),
+                    left: Val::Px(15.0),
+                    ..default()
+                },
+                ..default()
+            },
+            text: Text {
+                sections: vec![TextSection {
+                    value: "".to_string(),
+                    style: TextStyle {
+                        font: regular_font.clone(),
+                        font_size: 18.0,
+                        color: Color::WHITE,
+                    },
+                }],
+                alignment: Default::default(),
+            },
+            ..default()
+        })
+        .insert(DescriptionUi);
 }
 
 pub fn change_text_system(
@@ -104,14 +134,22 @@ pub fn change_text_system(
 }
 
 pub fn update_flavour_text_system(
-    mut query: Query<&mut Text, With<NameUi>>,
+    mut name_ui_query: Query<(&mut Text, &mut NameUi), Without<DescriptionUi>>,
+    mut description_ui_query: Query<(&mut Text, &mut DescriptionUi), Without<NameUi>>,
     selected_query: Query<&mut CaterpillarHead, With<SelectedCaterpillar>>,
 ) {
-    for mut text in query.iter_mut() {
+    for (mut text, _) in name_ui_query.iter_mut() {
         let mut name: String = "".to_string();
         if !selected_query.is_empty() {
             name = format!("{:}", selected_query.single().name);
         }
         text.sections[0].value = name;
+    }
+    for (mut text, _) in description_ui_query.iter_mut() {
+        let mut description: String = "".to_string();
+        if !selected_query.is_empty() {
+            description = format!("is thinking about {:}", selected_query.single().description);
+        }
+        text.sections[0].value = description;
     }
 }

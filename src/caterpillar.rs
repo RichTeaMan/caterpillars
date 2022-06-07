@@ -9,6 +9,7 @@ pub struct CaterpillarHead {
     pub manually_controlled: bool,
     pub frames: i32,
     pub name: String,
+    pub description: String,
 }
 
 #[derive(Component)]
@@ -19,6 +20,7 @@ pub struct CaterpillarPart {
 pub fn caterpillar_system(
     keyboard_input: Res<Input<KeyCode>>,
     time: Res<Time>,
+    dynamic_config: Res<DynamicConfig>,
     mut query: Query<(&mut Transform, &mut CaterpillarHead), Without<CaterpillarPart>>,
     mut part_query: Query<(&mut Transform, &mut CaterpillarPart), Without<CaterpillarHead>>,
 ) {
@@ -46,6 +48,8 @@ pub fn caterpillar_system(
                 transform.rotate(Quat::from_rotation_y(angle));
 
                 caterpillar.frames = random::range_i32(10, 500);
+
+                caterpillar.description = random::from_vec(&dynamic_config.thoughts);
             }
             direction = transform.forward();
             caterpillar.frames = caterpillar.frames - 1;
@@ -202,6 +206,7 @@ pub fn setup_caterpillars(
                 manually_controlled: false,
                 frames: 0,
                 name: random::from_vec(&config.names),
+                description: random::from_vec(&config.thoughts),
             })
             .with_children(|parent| {
                 // nose
