@@ -1,4 +1,4 @@
-use crate::{config, random};
+use crate::{config, dynamic_config::DynamicConfig, random};
 use bevy::prelude::*;
 use bevy_mod_picking::*;
 
@@ -88,7 +88,10 @@ pub fn setup_caterpillars(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
+    config_query: Query<&DynamicConfig>,
 ) {
+    let config = config_query.single();
+
     let head_radius = 2.0;
     let body_radius = 1.5;
     let head_sphere_handle = meshes.add(Mesh::from(shape::UVSphere {
@@ -138,7 +141,7 @@ pub fn setup_caterpillars(
         ..default()
     });
 
-    for caterpillar_index in 0..config::STARTING_CATERPILLARS {
+    for _ in 0..config::STARTING_CATERPILLARS {
         let mut starting_vec = random::vec3(config::STARTING_CATERPILLAR_RADIUS);
         starting_vec.y = 3.0;
         let starting_transform = Transform::default().with_translation(starting_vec);
@@ -200,7 +203,7 @@ pub fn setup_caterpillars(
                 next: part_entity_option,
                 manually_controlled: false,
                 frames: 0,
-                name: format!("Caterpillar {caterpillar_index}"),
+                name: random::from_vec(&config.names),
             })
             .with_children(|parent| {
                 // nose

@@ -25,3 +25,9 @@ pub fn vec3(radius: f32) -> Vec3 {
         range_f32(-radius, radius),
     );
 }
+
+pub fn from_vec(vec: &Vec<String>) -> String {
+    let length = vec.len() as i32;
+    let pick = range_i32(0, length) as usize;
+    return vec[pick].clone();
+}

@@ -21,7 +21,7 @@ pub struct SelectedCaterpillar;
 
 pub fn infotext_system(mut commands: Commands, asset_server: Res<AssetServer>) {
     let mono_font = asset_server.load("fonts/FiraMono-Regular.ttf");
-    let regular_font = asset_server.load("fonts/FiraSans-Bold.ttf");
+    let regular_font: Handle<Font> = asset_server.load("fonts/FiraSans-Bold.ttf");
     commands.spawn_bundle(UiCameraBundle::default());
     commands
         .spawn_bundle(TextBundle {
@@ -51,31 +51,31 @@ pub fn infotext_system(mut commands: Commands, asset_server: Res<AssetServer>) {
         .insert(TextChanges);
 
     commands
-    .spawn_bundle(TextBundle {
-        style: Style {
-            align_self: AlignSelf::FlexEnd,
-            position_type: PositionType::Absolute,
-            position: Rect {
-                top: Val::Px(300.0),
-                left: Val::Px(15.0),
+        .spawn_bundle(TextBundle {
+            style: Style {
+                align_self: AlignSelf::FlexEnd,
+                position_type: PositionType::Absolute,
+                position: Rect {
+                    top: Val::Px(300.0),
+                    left: Val::Px(15.0),
+                    ..default()
+                },
                 ..default()
             },
+            text: Text {
+                sections: vec![TextSection {
+                    value: "".to_string(),
+                    style: TextStyle {
+                        font: regular_font.clone(),
+                        font_size: 30.0,
+                        color: Color::WHITE,
+                    },
+                }],
+                alignment: Default::default(),
+            },
             ..default()
-        },
-        text: Text {
-            sections: vec![TextSection {
-                value: "".to_string(),
-                style: TextStyle {
-                    font: regular_font.clone(),
-                    font_size: 30.0,
-                    color: Color::WHITE,
-                },
-            }],
-            alignment: Default::default(),
-        },
-        ..default()
-    })
-    .insert(NameUi);
+        })
+        .insert(NameUi);
 }
 
 pub fn change_text_system(
@@ -108,7 +108,6 @@ pub fn update_flavour_text_system(
     selected_query: Query<&mut CaterpillarHead, With<SelectedCaterpillar>>,
 ) {
     for mut text in query.iter_mut() {
-
         let mut name: String = "".to_string();
         if !selected_query.is_empty() {
             name = format!("{:}", selected_query.single().name);

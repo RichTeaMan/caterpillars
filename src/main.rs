@@ -1,6 +1,7 @@
 mod camera;
 mod caterpillar;
 mod config;
+mod dynamic_config;
 mod foliage;
 mod pick_events;
 mod random;
@@ -11,6 +12,10 @@ use bevy_mod_picking::*;
 
 fn main() {
     App::new()
+        .add_startup_system_to_stage(
+            StartupStage::PreStartup,
+            dynamic_config::create_dynamic_config,
+        )
         .insert_resource(ClearColor(Color::rgb(0.53, 0.80, 0.92)))
         .add_plugins(DefaultPlugins)
         .add_plugin(FrameTimeDiagnosticsPlugin)
