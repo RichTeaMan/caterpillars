@@ -1,9 +1,9 @@
-use serde::{Deserialize, Serialize};
-use serde_json::Result;
-
 use bevy::prelude::*;
 
-#[derive(Component, Serialize, Deserialize, Default)]
+use crate::AppState;
+
+#[derive(serde::Deserialize, bevy::reflect::TypeUuid)]
+#[uuid = "3b661374-e6a2-11ec-8fea-0242ac120002"]
 #[serde(rename_all = "camelCase")]
 pub struct DynamicConfig {
     pub names: Vec<String>,
@@ -12,30 +12,18 @@ pub struct DynamicConfig {
 }
 
 pub fn create_dynamic_config(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let data_handle: HandleUntyped = asset_server.load_untyped("data.json");
+    let data_handle: Handle<DynamicConfig> = asset_server.load("data.json");
+    commands.insert_resource(data_handle);
+}
 
-    let asset_path = asset_server.get_handle_path(data_handle).unwrap();
-
-    let a = asset_server.asset_io().clone();
-
-    let load_task = async move { a.load_path(asset_path.path()).await };
-
-    let load_result = futures::executor::block_on(load_task);
-
-    let json_string;
-    match load_result {
-        Ok(result) => {
-            json_string = String::from_utf8_lossy(&result).into_owned();
-        }
-        Err(e) => panic!("{e}"),
-    }
-
-    let dynamic_config_result: Result<DynamicConfig> = serde_json::from_str(json_string.as_str());
-
-    match dynamic_config_result {
-        Ok(dynamic_config) => {
-            commands.spawn().insert(dynamic_config);
-        }
-        Err(e) => panic!("Error loading dynamic config {e}."),
+pub fn load_dynamic_config(
+    mut commands: Commands,
+    mut app_state: ResMut<State<AppState>>,
+    handle: Res<Handle<DynamicConfig>>,
+    mut dynamic_config_assets: ResMut<Assets<DynamicConfig>>,
+) {
+    if let Some(dynamic_config) = dynamic_config_assets.remove(handle.id) {
+        commands.insert_resource(dynamic_config);
+        app_state.set(AppState::Loading).unwrap();
     }
 }

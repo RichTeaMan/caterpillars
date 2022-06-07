@@ -88,10 +88,8 @@ pub fn setup_caterpillars(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
-    config_query: Query<&DynamicConfig>,
+    config: Res<DynamicConfig>,
 ) {
-    let config = config_query.single();
-
     let head_radius = 2.0;
     let body_radius = 1.5;
     let head_sphere_handle = meshes.add(Mesh::from(shape::UVSphere {
