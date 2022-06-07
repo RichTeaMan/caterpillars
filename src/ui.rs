@@ -42,7 +42,7 @@ pub fn infotext_system(mut commands: Commands, asset_server: Res<AssetServer>) {
                 sections: vec![TextSection {
                     value: "".to_string(),
                     style: TextStyle {
-                        font: mono_font.clone(),
+                        font: mono_font,
                         font_size: 30.0,
                         color: Color::WHITE,
                     },
@@ -96,7 +96,7 @@ pub fn infotext_system(mut commands: Commands, asset_server: Res<AssetServer>) {
                 sections: vec![TextSection {
                     value: "".to_string(),
                     style: TextStyle {
-                        font: regular_font.clone(),
+                        font: regular_font,
                         font_size: 18.0,
                         color: Color::WHITE,
                     },
@@ -141,7 +141,7 @@ pub fn update_flavour_text_system(
     for (mut text, _) in name_ui_query.iter_mut() {
         let mut name: String = "".to_string();
         if !selected_query.is_empty() {
-            name = format!("{:}", selected_query.single().name);
+            name = selected_query.single().name.to_string();
         }
         text.sections[0].value = name;
     }

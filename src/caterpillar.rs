@@ -52,7 +52,7 @@ pub fn caterpillar_system(
                 caterpillar.description = random::from_vec(&dynamic_config.thoughts);
             }
             direction = transform.forward();
-            caterpillar.frames = caterpillar.frames - 1;
+            caterpillar.frames -= 1;
         }
 
         transform.translation += direction * caterpillar.speed * time.delta_seconds();
@@ -163,7 +163,7 @@ pub fn setup_caterpillars(
                 .spawn_bundle(PbrBundle {
                     mesh: sphere_handle.clone(),
                     material: sphere_material_handle.clone(),
-                    transform: starting_transform.clone(),
+                    transform: starting_transform,
                     ..default()
                 })
                 .insert(caterpillar_part)
@@ -182,8 +182,7 @@ pub fn setup_caterpillars(
                         ..default()
                     });
                 })
-                .id()
-                .clone();
+                .id();
 
             part_entity_option = Option::from(part_entity);
         }
