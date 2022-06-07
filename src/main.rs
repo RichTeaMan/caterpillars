@@ -24,6 +24,7 @@ fn main() {
         .add_system(caterpillar::caterpillar_system)
         .add_system(camera::pan_orbit_camera)
         .add_system(ui::change_text_system)
+        .add_system(ui::update_flavour_text_system)
         .add_system_to_stage(CoreStage::PostUpdate, pick_events::print_events)
         .run();
 }
