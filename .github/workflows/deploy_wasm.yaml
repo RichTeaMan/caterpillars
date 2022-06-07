@@ -25,6 +25,8 @@ jobs:
           args: --release --all-features --target wasm32-unknown-unknown
       - name: Wasm binding
         run: wasm-bindgen --out-dir ./docs/ --target web target/wasm32-unknown-unknown/release/caterpillars.wasm
+      - name: Copy assets
+        run: cp assets/ docs/. -r
       - name: Archive artifacts
         uses: actions/upload-artifact@v3
         with:
