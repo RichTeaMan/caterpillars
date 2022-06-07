@@ -2,16 +2,20 @@ mod camera;
 mod caterpillar;
 mod config;
 mod foliage;
+mod pick_events;
 mod random;
 mod ui;
 
 use bevy::{diagnostic::FrameTimeDiagnosticsPlugin, prelude::*};
+use bevy_mod_picking::*;
 
 fn main() {
     App::new()
         .insert_resource(ClearColor(Color::rgb(0.53, 0.80, 0.92)))
         .add_plugins(DefaultPlugins)
         .add_plugin(FrameTimeDiagnosticsPlugin)
+        .add_plugin(PickingPlugin)
+        .add_plugin(InteractablePickingPlugin)
         .add_startup_system(setup_scene)
         .add_startup_system(foliage::setup_foliage)
         .add_startup_system(caterpillar::setup_caterpillars)
@@ -20,6 +24,7 @@ fn main() {
         .add_system(caterpillar::caterpillar_system)
         .add_system(camera::pan_orbit_camera)
         .add_system(ui::change_text_system)
+        .add_system_to_stage(CoreStage::PostUpdate, pick_events::print_events)
         .run();
 }
 

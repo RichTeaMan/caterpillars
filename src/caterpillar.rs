@@ -1,5 +1,6 @@
 use crate::{config, random};
 use bevy::prelude::*;
+use bevy_mod_picking::*;
 
 #[derive(Component)]
 pub struct CaterpillarHead {
@@ -7,6 +8,7 @@ pub struct CaterpillarHead {
     pub next: Option<Entity>,
     pub manually_controlled: bool,
     pub frames: i32,
+    pub name: String,
 }
 
 #[derive(Component)]
@@ -136,7 +138,7 @@ pub fn setup_caterpillars(
         ..default()
     });
 
-    for _ in 0..config::STARTING_CATERPILLARS {
+    for caterpillar_index in 0..config::STARTING_CATERPILLARS {
         let mut starting_vec = random::vec3(config::STARTING_CATERPILLAR_RADIUS);
         starting_vec.y = 3.0;
         let starting_transform = Transform::default().with_translation(starting_vec);
@@ -189,6 +191,7 @@ pub fn setup_caterpillars(
                 transform: starting_transform,
                 ..default()
             })
+            .insert_bundle(PickableBundle::default())
             .insert(CaterpillarHead {
                 speed: random::range_f32(
                     config::CATERPILLAR_MIN_SPEED,
@@ -197,6 +200,7 @@ pub fn setup_caterpillars(
                 next: part_entity_option,
                 manually_controlled: false,
                 frames: 0,
+                name: format!("Caterpillar {caterpillar_index}"),
             })
             .with_children(|parent| {
                 // nose

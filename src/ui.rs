@@ -3,8 +3,18 @@ use bevy::{
     prelude::*,
 };
 
+use crate::caterpillar::CaterpillarHead;
+
 #[derive(Component)]
 pub struct TextChanges;
+
+#[derive(Component)]
+pub struct UiInformation {
+    pub active_caterpillar_name: String,
+}
+
+#[derive(Component)]
+pub struct SelectedCaterpillar;
 
 pub fn infotext_system(mut commands: Commands, asset_server: Res<AssetServer>) {
     let font = asset_server.load("fonts/FiraMono-Regular.ttf");
@@ -41,6 +51,7 @@ pub fn change_text_system(
     time: Res<Time>,
     diagnostics: Res<Diagnostics>,
     mut query: Query<&mut Text, With<TextChanges>>,
+    selected_query: Query<(&mut SelectedCaterpillar, &mut CaterpillarHead)>,
 ) {
     for mut text in query.iter_mut() {
         let mut fps = 0.0;
@@ -59,5 +70,8 @@ pub fn change_text_system(
         }
 
         text.sections[0].value = format!("{:.1} fps, {:.3} ms/frame", fps, frame_time * 1000.0,);
+        if !selected_query.is_empty() {
+            text.sections[0].value += format!(" {:}", selected_query.single().1.name).as_str();
+        }
     }
 }
