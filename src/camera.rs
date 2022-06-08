@@ -85,6 +85,12 @@ pub fn pan_orbit_camera(
             let pitch = Quat::from_rotation_x(-delta_y);
             transform.rotation = yaw * transform.rotation; // rotate around global y axis
             transform.rotation *= pitch; // rotate around local x axis
+
+            // stops camera tilting below horizion. while loop because I don't understand quaternions.
+            while transform.rotation.x > -0.005 {
+                let correction = -f32::max(transform.rotation.x.abs(), 0.01);
+                transform.rotation *= Quat::from_rotation_x(correction);
+            }
         } else if pan.length_squared() > 0.0 {
             any = true;
             // make panning distance independent of resolution and FOV,
