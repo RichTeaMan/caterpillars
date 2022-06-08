@@ -3,7 +3,7 @@ use bevy::{
     prelude::*,
 };
 
-use crate::caterpillar::CaterpillarHead;
+use crate::{caterpillar::CaterpillarHead, config};
 
 #[derive(Component)]
 pub struct TextChanges;
@@ -120,7 +120,7 @@ pub fn change_text_system(
             }
         }
 
-        text.sections[0].value = format!("{:.1} fps", fps);
+        text.sections[0].value = format!("Build {} {:.1} fps", config::GIT_VERSION, fps);
     }
 }
 

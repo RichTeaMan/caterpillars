@@ -1,3 +1,7 @@
+use git_version::git_version;
+
+pub const GIT_VERSION: &str = git_version!();
+
 pub const PLANE_SIZE: f32 = 5000.0;
 
 /** Starting caterpillars.  */
