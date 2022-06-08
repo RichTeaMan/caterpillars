@@ -120,7 +120,12 @@ pub fn change_text_system(
             }
         }
 
-        text.sections[0].value = format!("Build {} {:.1} fps", config::GIT_VERSION, fps);
+        text.sections[0].value = format!(
+            "Build {}, {} {:.1} fps",
+            config::GIT_VERSION,
+            config::BUILD_DATE,
+            fps
+        );
     }
 }
 
