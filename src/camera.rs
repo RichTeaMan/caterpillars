@@ -99,8 +99,11 @@ pub fn pan_orbit_camera(
         } else if scroll.abs() > 0.0 {
             any = true;
             pan_orbit.radius -= scroll * pan_orbit.radius * 0.2;
-            // dont allow zoom to reach zero or you get stuck
-            pan_orbit.radius = f32::max(pan_orbit.radius, 0.05);
+            // don't allow zoom too far.
+            pan_orbit.radius = f32::max(pan_orbit.radius, 20.0);
+
+            // don't allow zoom too far out.
+            pan_orbit.radius = f32::min(pan_orbit.radius, 2500.0);
         }
 
         if any {
