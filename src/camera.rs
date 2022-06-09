@@ -36,7 +36,7 @@ pub fn pan_orbit_camera(
 ) {
     // change input mapping for orbit and panning here
     let orbit_button = MouseButton::Right;
-    let pan_button = MouseButton::Middle;
+    let pan_button = MouseButton::Left;
 
     let mut pan = Vec2::ZERO;
     let mut rotation_move = Vec2::ZERO;
@@ -86,7 +86,7 @@ pub fn pan_orbit_camera(
             transform.rotation = yaw * transform.rotation; // rotate around global y axis
             transform.rotation *= pitch; // rotate around local x axis
 
-            // stops camera tilting below horizion.
+            // stops camera tilting below horizon.
             if (transform.rotation.to_euler(EulerRot::YXZ)).1 > 0.0 {
                 transform.rotation *= Quat::from_rotation_x(-f32::abs(delta_y));
             }
@@ -98,8 +98,11 @@ pub fn pan_orbit_camera(
             // translate by local axes
             let right = transform.rotation * Vec3::X * -pan.x;
             let up = transform.rotation * Vec3::Y * pan.y;
+            //transform.translation.
             // make panning proportional to distance away from focus point
-            let translation = (right + up) * pan_orbit.radius;
+            let mut translation = (right + up) * pan_orbit.radius;
+            // stops focus point from keep upwards, eventually making rotations problematic.
+            translation.y = 0.0;
             pan_orbit.focus += translation;
         } else if scroll.abs() > 0.0 {
             any = true;
