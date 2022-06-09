@@ -86,10 +86,9 @@ pub fn pan_orbit_camera(
             transform.rotation = yaw * transform.rotation; // rotate around global y axis
             transform.rotation *= pitch; // rotate around local x axis
 
-            // stops camera tilting below horizion. while loop because I don't understand quaternions.
-            while transform.rotation.x > -0.005 {
-                let correction = -f32::max(transform.rotation.x.abs(), 0.01);
-                transform.rotation *= Quat::from_rotation_x(correction);
+            // stops camera tilting below horizion.
+            if (transform.rotation.to_euler(EulerRot::YXZ)).1 > 0.0 {
+                transform.rotation *= Quat::from_rotation_x(-f32::abs(delta_y));
             }
         } else if pan.length_squared() > 0.0 {
             any = true;
