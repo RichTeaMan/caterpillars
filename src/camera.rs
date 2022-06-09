@@ -32,6 +32,7 @@ pub fn pan_orbit_camera(
     mut ev_motion: EventReader<MouseMotion>,
     mut ev_scroll: EventReader<MouseWheel>,
     input_mouse: Res<Input<MouseButton>>,
+    keys: Res<Input<KeyCode>>,
     mut query: Query<(&mut PanOrbitCamera, &mut Transform, &PerspectiveProjection)>,
 ) {
     // change input mapping for orbit and panning here
@@ -43,7 +44,11 @@ pub fn pan_orbit_camera(
     let mut scroll = 0.0;
     let mut orbit_button_changed = false;
 
-    if input_mouse.pressed(orbit_button) {
+    // orbit camera with right mouse OR with left mouse and ctrl key pressed.
+    if input_mouse.pressed(orbit_button)
+        || (input_mouse.pressed(pan_button)
+            && (keys.pressed(KeyCode::LControl) || keys.pressed(KeyCode::RControl)))
+    {
         for ev in ev_motion.iter() {
             rotation_move += ev.delta;
         }
