@@ -7,10 +7,13 @@ mod pick_events;
 mod random;
 mod ui;
 
+use std::cell::RefCell;
+
 use bevy::{diagnostic::FrameTimeDiagnosticsPlugin, prelude::*};
 use bevy_common_assets::json::JsonAssetPlugin;
 use bevy_mod_picking::*;
 use dynamic_config::DynamicConfig;
+use wasm_bindgen::prelude::*;
 
 #[derive(Clone, Eq, PartialEq, Debug, Hash)]
 pub enum AppState {
@@ -27,6 +30,7 @@ fn main() {
         .add_plugin(PickingPlugin)
         .add_plugin(InteractablePickingPlugin)
         .add_plugin(JsonAssetPlugin::<DynamicConfig>::new(&["json"]))
+        .add_system(bevy::input::system::exit_on_esc_system)
         .add_startup_system_to_stage(
             StartupStage::PreStartup,
             dynamic_config::create_dynamic_config,
@@ -52,9 +56,40 @@ fn main() {
                 .with_system(camera::pan_orbit_camera)
                 .with_system(ui::change_text_system)
                 .with_system(ui::update_flavour_text_system)
-                .with_system(pick_events::print_events),
+                .with_system(ui::update_debug_ui_system)
+                .with_system(pick_events::print_events)
+                .with_system(window_resize_system),
         )
         .run();
+}
+
+thread_local!(static GLOBAL_X: RefCell<i32>  = RefCell::new(0));
+thread_local!(static GLOBAL_Y: RefCell<i32>  = RefCell::new(0));
+
+#[wasm_bindgen]
+pub fn caterpilar_game_resize(width: i32, height: i32) {
+    GLOBAL_X.with(|text| *text.borrow_mut() = width);
+    GLOBAL_Y.with(|text| *text.borrow_mut() = height);
+}
+
+fn window_resize_system(mut windows: ResMut<Windows>, keys: Res<Input<KeyCode>>) {
+    if keys.just_released(KeyCode::R) {
+        let window = windows.get_primary_mut().unwrap();
+        println!("Window size was: {},{}", window.width(), window.height());
+        window.set_resolution(800.0, 600.0);
+    }
+
+    let mut x = 0;
+    let mut y = 0;
+    GLOBAL_X.with(|text| x = *text.borrow());
+    GLOBAL_Y.with(|text| y = *text.borrow());
+
+    if x != 0 && y != 0 {
+        let window = windows.get_primary_mut().unwrap();
+        println!("Window size was: {},{}", window.width(), window.height());
+        window.set_resolution(x as f32, y as f32);
+        println!("Window size now: {},{}", window.width(), window.height());
+    }
 }
 
 fn loading_completed(mut app_state: ResMut<State<AppState>>) {

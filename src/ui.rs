@@ -3,7 +3,7 @@ use bevy::{
     prelude::*,
 };
 
-use crate::{caterpillar::CaterpillarHead, config};
+use crate::{camera, caterpillar::CaterpillarHead, config};
 
 #[derive(Component)]
 pub struct TextChanges;
@@ -21,6 +21,9 @@ pub struct UiInformation {
 
 #[derive(Component)]
 pub struct SelectedCaterpillar;
+
+#[derive(Component)]
+pub struct DebugUi;
 
 pub fn infotext_system(mut commands: Commands, asset_server: Res<AssetServer>) {
     let mono_font = asset_server.load("fonts/FiraMono-Regular.ttf");
@@ -42,7 +45,7 @@ pub fn infotext_system(mut commands: Commands, asset_server: Res<AssetServer>) {
                 sections: vec![TextSection {
                     value: "".to_string(),
                     style: TextStyle {
-                        font: mono_font,
+                        font: mono_font.clone(),
                         font_size: 30.0,
                         color: Color::WHITE,
                     },
@@ -106,6 +109,33 @@ pub fn infotext_system(mut commands: Commands, asset_server: Res<AssetServer>) {
             ..default()
         })
         .insert(DescriptionUi);
+
+    commands
+        .spawn_bundle(TextBundle {
+            style: Style {
+                align_self: AlignSelf::FlexEnd,
+                position_type: PositionType::Absolute,
+                position: Rect {
+                    top: Val::Px(5.0),
+                    left: Val::Px(5.0),
+                    ..default()
+                },
+                ..default()
+            },
+            text: Text {
+                sections: vec![TextSection {
+                    value: "".to_string(),
+                    style: TextStyle {
+                        font: mono_font,
+                        font_size: 18.0,
+                        color: Color::WHITE,
+                    },
+                }],
+                alignment: Default::default(),
+            },
+            ..default()
+        })
+        .insert(DebugUi);
 }
 
 pub fn change_text_system(
@@ -147,5 +177,24 @@ pub fn update_flavour_text_system(
             description = format!("is thinking about {:}", selected_query.single().description);
         }
         text.sections[0].value = description;
+    }
+}
+
+pub fn update_debug_ui_system(
+    windows: Res<Windows>,
+    mut query: Query<&mut Text, With<DebugUi>>,
+    mut style_query: Query<&mut Style, With<DebugUi>>,
+) {
+    for mut text in query.iter_mut() {
+        let resolution = camera::get_primary_window_size(&windows);
+
+        text.sections[0].value = format!("Resolution:{}, {}", resolution.x, resolution.y);
+    }
+    for mut text in style_query.iter_mut() {
+        text.position = Rect {
+            top: Val::Px(5.0),
+            left: Val::Px(5.0),
+            ..default()
+        };
     }
 }
