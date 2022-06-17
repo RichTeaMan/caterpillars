@@ -29,3 +29,5 @@ pub const CATERPILLAR_MIN_SPEED: f32 = 0.5;
 
 /** Maximum speed of a caterpillar. */
 pub const CATERPILLAR_MAX_SPEED: f32 = 50.0;
+
+pub const ENABLE_SHADOWS: bool = false;

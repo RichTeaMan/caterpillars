@@ -13,6 +13,8 @@
       left: 50%;
       transform: translate(-50%, -50%);
       background-color: white;
+      width: 100vw;
+      height: 100vw;
     }
   </style>
   <script>
@@ -21,10 +23,27 @@
 
   <!-- Note the usage of `type=module` here as this is an ES6 module -->
   <script type="module">
-    export function windowResize() {
-      //caterpilar_game_resize(window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio);
-      caterpilar_game_resize(window.innerWidth, window.innerHeight);
-      console.log(`JS ${window.innerWidth}, ${window.innerHeight} | ratio ${window.devicePixelRatio}`);
+    export async function windowResize() {
+
+      const pixelRatioThreshold = 2.0;
+      let resolutionMulti = 1.0;
+
+      // having problems with high DPI on phones. doing a hack
+      if (window.devicePixelRatio > pixelRatioThreshold) {
+        resolutionMulti = 0.5;
+      }
+
+      let width = window.innerWidth * resolutionMulti;
+      let height = window.innerHeight * resolutionMulti;
+      let scale = window.devicePixelRatio / resolutionMulti;
+
+      // another hack, Chrome for Android has some texture buffer issues
+      if (window.devicePixelRatio > pixelRatioThreshold && window.chrome) {
+        scale = 4.0;
+      }
+
+      await caterpilar_game_resize_with_scale(width, height, scale);
+      console.log(`JS ${window.innerWidth}, ${window.innerHeight} @ ${window.devicePixelRatio} -> ${width}, ${height} @ ${scale}`);
     }
 
     // Use ES module import syntax to import functionality from the module
@@ -34,7 +53,7 @@
     // will "boot" the module and make it ready to use. Currently browsers
     // don't support natively imported WebAssembly as an ES module, but
     // eventually the manual initialization won't be required!
-    import init, { caterpilar_game_resize } from './caterpillars.js';
+    import init, { caterpilar_game_resize_with_scale } from './caterpillars.js';
 
     async function run() {
       // First up we need to actually load the wasm file, so we use the

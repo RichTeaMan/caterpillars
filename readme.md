@@ -32,3 +32,5 @@ Local HTTP server:
 ```bash
 python3 -m http.server
 ```
+
+Note that this doesn't work so well in Firefox due to HTTPS constraints. Chrome has a better time of it.

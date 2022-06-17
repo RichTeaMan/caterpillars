@@ -25,6 +25,11 @@ pub enum AppState {
 fn main() {
     App::new()
         .insert_resource(ClearColor(Color::rgb(0.53, 0.80, 0.92)))
+        .insert_resource(WindowDescriptor {
+            width: 100.0,
+            height: 100.0,
+            ..Default::default()
+        })
         .add_plugins(DefaultPlugins)
         .add_plugin(FrameTimeDiagnosticsPlugin)
         .add_plugin(PickingPlugin)
@@ -65,6 +70,7 @@ fn main() {
 
 thread_local!(static GLOBAL_X: RefCell<i32>  = RefCell::new(0));
 thread_local!(static GLOBAL_Y: RefCell<i32>  = RefCell::new(0));
+thread_local!(static GLOBAL_SCALE: RefCell<f64>  = RefCell::new(0.0));
 
 #[wasm_bindgen]
 pub fn caterpilar_game_resize(width: i32, height: i32) {
@@ -72,23 +78,46 @@ pub fn caterpilar_game_resize(width: i32, height: i32) {
     GLOBAL_Y.with(|text| *text.borrow_mut() = height);
 }
 
+#[wasm_bindgen]
+pub fn caterpilar_game_resize_with_scale(width: i32, height: i32, scale: f64) {
+    GLOBAL_X.with(|text| *text.borrow_mut() = width);
+    GLOBAL_Y.with(|text| *text.borrow_mut() = height);
+    GLOBAL_SCALE.with(|text| *text.borrow_mut() = scale);
+}
+
 fn window_resize_system(mut windows: ResMut<Windows>, keys: Res<Input<KeyCode>>) {
     if keys.just_released(KeyCode::R) {
         let window = windows.get_primary_mut().unwrap();
-        println!("Window size was: {},{}", window.width(), window.height());
+        info!("Window size was: {},{}", window.width(), window.height());
         window.set_resolution(800.0, 600.0);
     }
 
     let mut x = 0;
     let mut y = 0;
+    let mut scale = 0.0;
     GLOBAL_X.with(|text| x = *text.borrow());
     GLOBAL_Y.with(|text| y = *text.borrow());
+    GLOBAL_SCALE.with(|text| scale = *text.borrow());
 
     if x != 0 && y != 0 {
         let window = windows.get_primary_mut().unwrap();
-        println!("Window size was: {},{}", window.width(), window.height());
+        info!("Window size was: {},{}", window.width(), window.height());
         window.set_resolution(x as f32, y as f32);
-        println!("Window size now: {},{}", window.width(), window.height());
+        info!("Window size now: {},{}", x, y);
+
+        if scale != 0.0 {
+            info!(
+                "Window scale was: {:?} {:?}",
+                window.scale_factor(),
+                window.scale_factor_override()
+            );
+            //window.set_scale_factor_override(Some(4.0));
+            window.set_scale_factor_override(Some(scale));
+            info!("Window scale now: {}", scale);
+        }
+        GLOBAL_X.with(|text| *text.borrow_mut() = 0);
+        GLOBAL_Y.with(|text| *text.borrow_mut() = 0);
+        GLOBAL_SCALE.with(|text| *text.borrow_mut() = 0.0);
     }
 }
 
@@ -110,6 +139,7 @@ fn setup_scene(
         perceptual_roughness: 1.0,
         ..default()
     });
+
     commands.spawn_bundle(PbrBundle {
         mesh: ground_plane_handle,
         material: ground_material_handle,
@@ -121,7 +151,7 @@ fn setup_scene(
     const HALF_SIZE: f32 = config::PLANE_SIZE / 2.0;
     commands.spawn_bundle(DirectionalLightBundle {
         directional_light: DirectionalLight {
-            shadows_enabled: true,
+            shadows_enabled: config::ENABLE_SHADOWS,
             shadow_projection: OrthographicProjection {
                 left: -HALF_SIZE,
                 right: HALF_SIZE,
