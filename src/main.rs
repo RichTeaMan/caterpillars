@@ -1,5 +1,6 @@
 mod camera;
 mod caterpillar;
+mod collision;
 mod config;
 mod dynamic_config;
 mod foliage;

@@ -39,7 +39,6 @@ pub const START_RESOLUTION_WIDTH: f32 = 100.0;
 #[cfg(target_arch = "wasm32")]
 pub const START_RESOLUTION_HEIGHT: f32 = 100.0;
 
-
 #[cfg(not(target_arch = "wasm32"))]
 pub const ENABLE_SHADOWS: bool = true;
 
