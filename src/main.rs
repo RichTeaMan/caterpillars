@@ -26,8 +26,8 @@ fn main() {
     App::new()
         .insert_resource(ClearColor(Color::rgb(0.53, 0.80, 0.92)))
         .insert_resource(WindowDescriptor {
-            width: 100.0,
-            height: 100.0,
+            width: config::START_RESOLUTION_WIDTH,
+            height: config::START_RESOLUTION_HEIGHT,
             ..Default::default()
         })
         .add_plugins(DefaultPlugins)

@@ -30,4 +30,21 @@ pub const CATERPILLAR_MIN_SPEED: f32 = 0.5;
 /** Maximum speed of a caterpillar. */
 pub const CATERPILLAR_MAX_SPEED: f32 = 50.0;
 
+#[cfg(target_arch = "wasm32")]
 pub const ENABLE_SHADOWS: bool = false;
+
+#[cfg(target_arch = "wasm32")]
+pub const START_RESOLUTION_WIDTH: f32 = 100.0;
+
+#[cfg(target_arch = "wasm32")]
+pub const START_RESOLUTION_HEIGHT: f32 = 100.0;
+
+
+#[cfg(not(target_arch = "wasm32"))]
+pub const ENABLE_SHADOWS: bool = true;
+
+#[cfg(not(target_arch = "wasm32"))]
+pub const START_RESOLUTION_WIDTH: f32 = 1280.0;
+
+#[cfg(not(target_arch = "wasm32"))]
+pub const START_RESOLUTION_HEIGHT: f32 = 720.0;
