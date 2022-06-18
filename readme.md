@@ -21,7 +21,7 @@ cargo run --target wasm32-unknown-unknown
 ### Building WASM
 
 ```bash
-rustup target install wasm32-unknown-unknown && cargo install wasm-server-runner wasm-bindgen-cli && \
+rustup target install wasm32-unknown-unknown && cargo install wasm-bindgen-cli && \
 cargo build --all-features --target wasm32-unknown-unknown && \
 wasm-bindgen --out-dir ./docs/ --target web target/wasm32-unknown-unknown/debug/caterpillars.wasm && \
 cp assets/ docs/. -r
