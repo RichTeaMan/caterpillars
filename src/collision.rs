@@ -15,56 +15,76 @@ impl Default for Collider {
     }
 }
 
-pub fn collision_system() {}
-
-#[cfg(test)]
-#[derive(Default, Component)]
-struct CollisionTest {
-    has_collided: bool,
+pub fn collision_check(vector_a: Vec3, vector_b: Vec3, distance: f32) -> bool {
+    return distance > vector_a.distance(vector_b);
 }
 
 #[test]
 #[cfg(test)]
-fn update_score_on_event() {
-    // Setup app
-    let mut app = App::new();
+fn collison_check_test_1() {
 
-    //app.world.entity(entity).
+    let vector_a = Vec3::new(0.0, 0.0, 0.0);
+    let vector_b = Vec3::new(0.5, 0.0, 0.0);
 
-    let callback: CollisionCallback =
-        |commands, mut world, (collider_a, entity_a), (collider_b, entit_b)| {
-            let option = world
-                .query::<&mut CollisionTest>()
-                .get_mut(&mut world, entity_a);
-            if let Ok(mut ct) = option {
-                ct.has_collided = true;
-            }
-        };
-
-    app.world
-        .spawn()
-        .insert(Collider {
-            collision_callback: callback.clone(),
-        })
-        .insert(CollisionTest::default());
-    app.world
-        .spawn()
-        .insert(Collider {
-            collision_callback: callback,
-        })
-        .insert(CollisionTest::default());
-
-    // Add our systems
-    app.add_system(collision_system);
-
-    app.world.entities();
-
-    // Run systems
-    app.update();
+    let collides = collision_check(vector_a, vector_b, 1.0);
 
     // Check resulting changes
-    //assert_eq!(called_back, true);
+    assert_eq!(collides, true);
+}
+
+
+
+#[test]
+#[cfg(test)]
+fn collison_check_test_2() {
+
+    let vector_a = Vec3::new(0.0, 0.0, 0.0);
+    let vector_b = Vec3::new(-0.5, 0.0, 0.0);
+
+    let collides = collision_check(vector_a, vector_b, 1.0);
+
+    // Check resulting changes
+    assert_eq!(collides, true);
+}
+
+
+
+#[test]
+#[cfg(test)]
+fn collison_check_test_3() {
+
+    let vector_a = Vec3::new(0.0, 0.0, 0.0);
+    let vector_b = Vec3::new(0.0, 0.0, 0.0);
+
+    let collides = collision_check(vector_a, vector_b, 1.0);
+
+    // Check resulting changes
+    assert_eq!(collides, true);
 }
 
 #[test]
-fn test_callback() {}
+#[cfg(test)]
+fn collison_check_test_4() {
+
+    let vector_a = Vec3::new(0.0, 0.0, 0.0);
+    let vector_b = Vec3::new(1.1, 0.0, 0.0);
+
+    let collides = collision_check(vector_a, vector_b, 1.0);
+
+    // Check resulting changes
+    assert_eq!(collides, false);
+}
+
+
+#[test]
+#[cfg(test)]
+fn collison_check_test_5() {
+
+    let vector_a = Vec3::new(0.0, 0.0, 0.0);
+    let vector_b = Vec3::new(1.0, 1.0, 0.0);
+
+    let collides = collision_check(vector_a, vector_b, 1.0);
+
+    // Check resulting changes
+    assert_eq!(collides, false);
+}
