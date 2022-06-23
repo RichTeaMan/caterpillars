@@ -15,6 +15,9 @@ jobs:
         run: sudo apt-get install -y libasound2-dev portaudio19-dev build-essential libpulse-dev libdbus-1-dev g++ pkg-config libx11-dev libasound2-dev libudev-dev
       - uses: actions-rs/cargo@v1
         with:
+          command: test
+      - uses: actions-rs/cargo@v1
+        with:
           command: build
           args: --release --all-features
       - name: Archive artifacts
@@ -31,6 +34,9 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
+      - uses: actions-rs/cargo@v1
+        with:
+          command: test
       - uses: actions-rs/cargo@v1
         with:
           command: build
@@ -53,6 +59,9 @@ jobs:
         run: sudo apt-get install -y libasound2-dev portaudio19-dev build-essential libpulse-dev libdbus-1-dev g++ pkg-config libx11-dev libasound2-dev libudev-dev
       - name: Install cargo dependencies
         run: rustup target install wasm32-unknown-unknown && cargo install wasm-bindgen-cli
+      - uses: actions-rs/cargo@v1
+        with:
+          command: test
       - uses: actions-rs/cargo@v1
         with:
           command: build
