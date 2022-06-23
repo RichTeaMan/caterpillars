@@ -1,4 +1,4 @@
-use crate::{config, dynamic_config::DynamicConfig, random};
+use crate::{collision, config, dynamic_config::DynamicConfig, foliage::Food, random};
 use bevy::prelude::*;
 use bevy_mod_picking::*;
 
@@ -73,6 +73,21 @@ pub fn caterpillar_system(
 
                 parent_transform = part_transform.translation;
                 caterpillar_part = part.next;
+            }
+        }
+    }
+}
+
+pub fn eat_check(
+    mut commands: Commands,
+    caterpillar_query: Query<(&mut Transform, &mut CaterpillarHead), Without<Food>>,
+    food_query: Query<(Entity, &mut Transform, &mut Food)>,
+) {
+    for caterpillar in caterpillar_query.iter() {
+        for food in food_query.iter() {
+            if collision::collision_check(caterpillar.0.translation, food.1.translation, 4.0) {
+                info!("{}: YUM YUM!!!", caterpillar.1.name);
+                commands.entity(food.0).despawn();
             }
         }
     }

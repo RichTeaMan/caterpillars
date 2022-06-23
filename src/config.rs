@@ -14,7 +14,7 @@ pub const STARTING_CATERPILLARS: i32 = 20;
 
 pub const STARTING_CATERPILLAR_RADIUS: f32 = 100.0;
 
-pub const STARTING_BUSHES: i32 = 200;
+pub const STARTING_BUSHES: i32 = 20000;
 
 pub const STARTING_TREES: i32 = 200;
 

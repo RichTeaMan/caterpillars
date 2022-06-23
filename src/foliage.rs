@@ -2,6 +2,9 @@ use bevy::prelude::*;
 
 use crate::{config, random};
 
+#[derive(Component)]
+pub struct Food;
+
 pub struct FoliageAssets {
     pub tree_box_handle: Handle<Mesh>,
     pub tree_trunk_material_handle: Handle<StandardMaterial>,
@@ -127,12 +130,14 @@ fn create_bush_prv<'w, 's>(
     starting_vec.y = 4.0 / 2.0;
     let starting_transform = Transform::default().with_translation(starting_vec);
 
-    commands.spawn_bundle(PbrBundle {
-        mesh: foliage_assets.bush_handle.clone(),
-        material: foliage_assets.bush_material_handle.clone(),
-        transform: starting_transform,
-        ..default()
-    });
+    commands
+        .spawn_bundle(PbrBundle {
+            mesh: foliage_assets.bush_handle.clone(),
+            material: foliage_assets.bush_material_handle.clone(),
+            transform: starting_transform,
+            ..default()
+        })
+        .insert(Food);
     commands
 }
 
