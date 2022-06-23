@@ -20,12 +20,14 @@ jobs:
         with:
           command: build
           args: --release --all-features
+      - name: Copy assets
+        run: cp assets/ target/release/. -r
       - name: Archive artifacts
         uses: actions/upload-artifact@v3
         with:
           name: caterpillars-linux-dist
           path: |
-            target/release/caterpillars
+            target/release/
   build_and_test_windows:
     name: CaterpillarsWindows
     runs-on: windows-latest
@@ -41,12 +43,14 @@ jobs:
         with:
           command: build
           args: --release --all-features
+      - name: Copy assets
+        run: copy assets/ target/release/
       - name: Archive artifacts
         uses: actions/upload-artifact@v3
         with:
           name: caterpillars-windows-dist
           path: |
-            target/release/caterpillars.exe
+            target/release/
   build_and_test_wasm:
     name: CaterpillarsWasm
     runs-on: ubuntu-latest
