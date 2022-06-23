@@ -16,7 +16,7 @@ impl Default for Collider {
 }
 
 pub fn collision_check(vector_a: Vec3, vector_b: Vec3, distance: f32) -> bool {
-    return distance > vector_a.distance(vector_b);
+    distance > vector_a.distance(vector_b)
 }
 
 pub fn inside_polygon(vector: Vec2, polygon: &[Vec2]) -> bool {
@@ -33,7 +33,7 @@ pub fn inside_polygon(vector: Vec2, polygon: &[Vec2]) -> bool {
     for i in 0..(polygon.len() - 1) {
         lines.push((polygon[i], polygon[i + 1]));
     }
-    lines.push((polygon[polygon.len() - 1 as usize], polygon[0]));
+    lines.push((polygon[polygon.len() - 1_usize], polygon[0]));
 
     let mut intersections = 0;
     for line in lines {
@@ -49,12 +49,12 @@ pub fn inside_polygon(vector: Vec2, polygon: &[Vec2]) -> bool {
             / (((x1 - x2) * (y3 - y4)) - ((y1 - y2) * (x3 - x4)));
 
         // intersection only occurs if 0 <= t <= 1 & 0 <= u <= 1
-        if 0.0 <= t && t <= 1.0 && 0.0 <= u && u <= 1.0 {
+        if (0.0..=1.0).contains(&t) && (0.0..=1.0).contains(&u) {
             intersections += 1;
         }
     }
 
-    return intersections % 2 != 0;
+    intersections % 2 != 0
 }
 
 #[test]

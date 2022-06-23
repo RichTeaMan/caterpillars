@@ -112,7 +112,7 @@ fn create_tree_prv<'w, 's>(
                 ..default()
             });
         });
-    return commands;
+    commands
 }
 
 pub fn create_tree(commands: Commands, foliage_assets: Res<FoliageAssets>) {
@@ -133,7 +133,7 @@ fn create_bush_prv<'w, 's>(
         transform: starting_transform,
         ..default()
     });
-    return commands;
+    commands
 }
 
 pub fn create_bush(commands: Commands, foliage_assets: Res<FoliageAssets>) {
