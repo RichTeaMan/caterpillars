@@ -28,6 +28,11 @@ jobs:
           name: caterpillars-linux-dist
           path: |
             target/release/
+            !build
+            !deps
+            !examples
+            !incremental
+            !caterpillars.d
   build_and_test_windows:
     name: CaterpillarsWindows
     runs-on: windows-latest
@@ -51,6 +56,11 @@ jobs:
           name: caterpillars-windows-dist
           path: |
             target/release/
+            !build
+            !deps
+            !examples
+            !incremental
+            !caterpillars.d
   build_and_test_wasm:
     name: CaterpillarsWasm
     runs-on: ubuntu-latest
