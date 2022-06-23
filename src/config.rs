@@ -18,6 +18,8 @@ pub const STARTING_BUSHES: i32 = 200;
 
 pub const STARTING_TREES: i32 = 200;
 
+pub const TREE_HEIGHT: f32 = 100.0;
+
 /** Minimum length of a caterpillar. */
 pub const CATERPILLAR_MIN_LENGTH: i32 = 3;
 

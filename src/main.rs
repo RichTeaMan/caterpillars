@@ -10,11 +10,13 @@ mod ui;
 
 use std::cell::RefCell;
 
-use bevy::{diagnostic::FrameTimeDiagnosticsPlugin, prelude::*};
+use bevy::{core::FixedTimestep, diagnostic::FrameTimeDiagnosticsPlugin, prelude::*};
 use bevy_common_assets::json::JsonAssetPlugin;
 use bevy_mod_picking::*;
 use dynamic_config::DynamicConfig;
 use wasm_bindgen::prelude::*;
+
+const TIMESTEP_1_PER_SECOND: f64 = 1.0;
 
 #[derive(Clone, Eq, PartialEq, Debug, Hash)]
 pub enum AppState {
@@ -41,6 +43,7 @@ fn main() {
             StartupStage::PreStartup,
             dynamic_config::create_dynamic_config,
         )
+        .add_startup_system_to_stage(StartupStage::PreStartup, foliage::setup_foliage_assets)
         .add_startup_system_to_stage(StartupStage::Startup, dynamic_config::load_dynamic_config)
         .add_state(AppState::PreLoad)
         .add_system_set(
@@ -64,7 +67,9 @@ fn main() {
                 .with_system(ui::update_flavour_text_system)
                 .with_system(ui::update_debug_ui_system)
                 .with_system(pick_events::print_events)
-                .with_system(window_resize_system),
+                .with_system(window_resize_system)
+                .with_run_criteria(FixedTimestep::step(TIMESTEP_1_PER_SECOND))
+                .with_system(foliage::create_bush),
         )
         .run();
 }
