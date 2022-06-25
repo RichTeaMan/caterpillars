@@ -6,6 +6,7 @@ mod dynamic_config;
 mod foliage;
 mod pick_events;
 mod random;
+mod toast;
 mod ui;
 
 use std::cell::RefCell;
@@ -14,6 +15,7 @@ use bevy::{core::FixedTimestep, diagnostic::FrameTimeDiagnosticsPlugin, prelude:
 use bevy_common_assets::json::JsonAssetPlugin;
 use bevy_mod_picking::*;
 use dynamic_config::DynamicConfig;
+use toast::ToastEvent;
 use wasm_bindgen::prelude::*;
 
 const TIMESTEP_1_PER_SECOND: f64 = 1.0;
@@ -27,6 +29,7 @@ pub enum AppState {
 
 fn main() {
     App::new()
+        .add_event::<ToastEvent>()
         .insert_resource(ClearColor(Color::rgb(0.53, 0.80, 0.92)))
         .insert_resource(WindowDescriptor {
             width: config::START_RESOLUTION_WIDTH,
@@ -39,6 +42,7 @@ fn main() {
         .add_plugin(InteractablePickingPlugin)
         .add_plugin(JsonAssetPlugin::<DynamicConfig>::new(&["json"]))
         .add_system(bevy::input::system::exit_on_esc_system)
+        .add_system(toast::toast_system)
         .add_startup_system_to_stage(
             StartupStage::PreStartup,
             dynamic_config::create_dynamic_config,

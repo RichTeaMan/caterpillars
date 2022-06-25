@@ -1,4 +1,6 @@
-use crate::{collision, config, dynamic_config::DynamicConfig, foliage::Food, random};
+use crate::{
+    collision, config, dynamic_config::DynamicConfig, foliage::Food, random, toast::ToastEvent,
+};
 use bevy::prelude::*;
 use bevy_mod_picking::*;
 
@@ -82,11 +84,16 @@ pub fn eat_check(
     mut commands: Commands,
     caterpillar_query: Query<(&mut Transform, &mut CaterpillarHead), Without<Food>>,
     food_query: Query<(Entity, &mut Transform, &mut Food)>,
+    mut ev_toast: EventWriter<ToastEvent>
 ) {
     for caterpillar in caterpillar_query.iter() {
         for food in food_query.iter() {
             if collision::collision_check(caterpillar.0.translation, food.1.translation, 4.0) {
                 info!("{}: YUM YUM!!!", caterpillar.1.name);
+                ev_toast.send(ToastEvent {
+                    message: format!("{}: YUM YUM!!!", caterpillar.1.name),
+                    expiry_tick: 5000,
+                });
                 commands.entity(food.0).despawn();
             }
         }
