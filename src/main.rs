@@ -72,7 +72,10 @@ fn main() {
                 .with_system(ui::update_debug_ui_system)
                 .with_system(pick_events::print_events)
                 .with_system(window_resize_system)
-                .with_system(caterpillar::eat_check)
+                .with_system(caterpillar::eat_check),
+        )
+        .add_system_set(
+            SystemSet::on_update(AppState::Level)
                 .with_run_criteria(FixedTimestep::step(TIMESTEP_1_PER_SECOND))
                 .with_system(foliage::create_bush),
         )

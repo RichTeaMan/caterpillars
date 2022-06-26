@@ -84,7 +84,7 @@ pub fn eat_check(
     mut commands: Commands,
     caterpillar_query: Query<(&mut Transform, &mut CaterpillarHead), Without<Food>>,
     food_query: Query<(Entity, &mut Transform, &mut Food)>,
-    mut ev_toast: EventWriter<ToastEvent>
+    mut ev_toast: EventWriter<ToastEvent>,
 ) {
     for caterpillar in caterpillar_query.iter() {
         for food in food_query.iter() {
