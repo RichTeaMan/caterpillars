@@ -47,7 +47,7 @@ jobs:
         with:
           name: caterpillars-windows-dist
           path: |
-            target/release/
+            target/release/caterpillars.exe
             assets/
   build_and_test_wasm:
     name: CaterpillarsWasm
