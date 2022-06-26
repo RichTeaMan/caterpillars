@@ -118,6 +118,7 @@ fn create_tree_prv<'w, 's>(
     commands
 }
 
+#[allow(dead_code)]
 pub fn create_tree(commands: Commands, foliage_assets: Res<FoliageAssets>) {
     create_tree_prv(commands, &foliage_assets);
 }

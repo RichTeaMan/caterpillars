@@ -19,6 +19,7 @@ pub fn collision_check(vector_a: Vec3, vector_b: Vec3, distance: f32) -> bool {
     distance > vector_a.distance(vector_b)
 }
 
+#[allow(dead_code)]
 pub fn inside_polygon(vector: Vec2, polygon: &[Vec2]) -> bool {
     // This method counts how many times an imaginary line drawn from the vector eastwards
     // overlaps lines of the polygon. An odd number of overlaps is considered inside the polygon,
