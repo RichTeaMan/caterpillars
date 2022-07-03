@@ -6,10 +6,10 @@
     "startingTrees": 0,
     "bushSpawnRate": 0,
     "treeHeight": 100.0,
-    "caterpillarMinLength": 3,
-    "caterpillarMaxLength": 20,
-    "caterpillarMinSpeed": 0.5,
-    "caterpillarMaxSpeed": 50.0,
+    "caterpillarMinLength": 7,
+    "caterpillarMaxLength": 8,
+    "caterpillarMinSpeed": 5.0,
+    "caterpillarMaxSpeed": 5.0,
     "enableShadows": true,
     "names": [
         "Test"
