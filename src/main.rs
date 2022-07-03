@@ -84,7 +84,7 @@ fn main() {
         .add_system_set(
             SystemSet::on_update(AppState::Level)
                 .with_run_criteria(FixedTimestep::step(TIMESTEP_1_PER_SECOND))
-                .with_system(foliage::create_bush),
+                .with_system(foliage::spawn_bushes),
         )
         .run();
 }

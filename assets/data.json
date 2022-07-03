@@ -4,6 +4,7 @@
     "startingCaterpillarRadius": 100.0,
     "startingBushes": 20000,
     "startingTrees": 200,
+    "bushSpawnRate": 0,
     "treeHeight": 100.0,
     "caterpillarMinLength": 3,
     "caterpillarMaxLength": 20,

@@ -17,6 +17,8 @@ pub struct DynamicConfig {
 
     pub starting_trees: i32,
 
+    pub bush_spawn_rate: i32,
+
     pub tree_height: f32,
 
     /** Minimum length of a caterpillar. */

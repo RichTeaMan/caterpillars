@@ -163,10 +163,12 @@ fn create_bush_prv<'w, 's>(
     commands
 }
 
-pub fn create_bush(
-    commands: Commands,
+pub fn spawn_bushes(
+    mut commands: Commands,
     foliage_assets: Res<FoliageAssets>,
     config: Res<DynamicConfig>,
 ) {
-    create_bush_prv(commands, &foliage_assets, config.plane_size);
+    for _ in 0..config.bush_spawn_rate {
+        commands = create_bush_prv(commands, &foliage_assets, config.plane_size);
+    }
 }

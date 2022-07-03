@@ -1,9 +1,10 @@
 {
     "planeSize": 50.0,
     "startingCaterpillars": 1,
-    "startingCaterpillarRadius": 100.0,
+    "startingCaterpillarRadius": 0.0,
     "startingBushes": 0,
     "startingTrees": 0,
+    "bushSpawnRate": 0,
     "treeHeight": 100.0,
     "caterpillarMinLength": 3,
     "caterpillarMaxLength": 20,
