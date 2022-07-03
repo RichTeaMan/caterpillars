@@ -50,8 +50,7 @@ fn main() {
         .add_system(bevy::window::close_on_esc)
         .add_system(toast::toast_system)
         .add_system_set(
-            SystemSet::on_update(AppState::Boot)
-                .with_system(dynamic_config::create_dynamic_config)
+            SystemSet::on_update(AppState::Boot).with_system(dynamic_config::create_dynamic_config),
         )
         .add_system_set(
             SystemSet::on_update(AppState::ConfigLoad)
@@ -60,7 +59,7 @@ fn main() {
         .add_system_set(
             SystemSet::on_update(AppState::PreLoad)
                 .with_system(foliage::setup_foliage_assets)
-                .with_system(preloading_completed)
+                .with_system(preloading_completed),
         )
         .add_system_set(
             SystemSet::on_enter(AppState::Loading)
@@ -133,7 +132,6 @@ fn window_resize_system(mut windows: ResMut<Windows>, keys: Res<Input<KeyCode>>)
                 window.scale_factor(),
                 window.scale_factor_override()
             );
-            //window.set_scale_factor_override(Some(4.0));
             window.set_scale_factor_override(Some(scale));
             info!("Window scale now: {}", scale);
         }

@@ -1,0 +1,22 @@
+{
+    "planeSize": 50.0,
+    "startingCaterpillars": 1,
+    "startingCaterpillarRadius": 100.0,
+    "startingBushes": 0,
+    "startingTrees": 0,
+    "treeHeight": 100.0,
+    "caterpillarMinLength": 3,
+    "caterpillarMaxLength": 20,
+    "caterpillarMinSpeed": 0.5,
+    "caterpillarMaxSpeed": 50.0,
+    "enableShadows": true,
+    "names": [
+        "Test"
+    ],
+    "thoughts": [
+        "testing."
+    ],
+    "childThoughts": [
+        "small testing."
+    ]
+}

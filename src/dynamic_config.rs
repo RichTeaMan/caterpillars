@@ -1,3 +1,5 @@
+use std::env;
+
 use bevy::prelude::*;
 
 use crate::AppState;
@@ -38,8 +40,22 @@ pub struct DynamicConfig {
 
 #[derive(Resource)]
 pub struct DynamicConfigHandleHolder(Handle<DynamicConfig>);
-pub fn create_dynamic_config(mut commands: Commands, asset_server: Res<AssetServer>, mut app_state: ResMut<State<AppState>>) {
-    let data_handle: Handle<DynamicConfig> = asset_server.load("data.json");
+
+pub fn create_dynamic_config(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    mut app_state: ResMut<State<AppState>>,
+) {
+    let mut data_file: String = "data.json".to_string();
+    let args: Vec<String> = env::args().collect();
+    for arg in args {
+        if arg.ends_with(".json") {
+            data_file = arg.clone();
+        }
+    }
+    info!("Using data from {}.", data_file);
+    
+    let data_handle: Handle<DynamicConfig> = asset_server.load(data_file.as_str());
     commands.insert_resource(DynamicConfigHandleHolder(data_handle));
     app_state.set(AppState::ConfigLoad).unwrap();
     info!("Config created.");
