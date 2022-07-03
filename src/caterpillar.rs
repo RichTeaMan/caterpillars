@@ -2,6 +2,12 @@ use crate::{collision, dynamic_config::DynamicConfig, foliage::Food, random, toa
 use bevy::prelude::*;
 use bevy_mod_picking::*;
 
+#[derive(PartialEq, Eq)]
+pub enum AngleOffsetDirection {
+    Left,
+    Right,
+}
+
 #[derive(Component)]
 pub struct CaterpillarHead {
     pub speed: f32,
@@ -10,6 +16,10 @@ pub struct CaterpillarHead {
     pub frames: i32,
     pub name: String,
     pub description: String,
+
+    pub angle: f32,
+    pub angle_offset: f32,
+    pub angle_offset_direction: AngleOffsetDirection,
 }
 
 #[derive(Component)]
@@ -43,8 +53,10 @@ pub fn caterpillar_system(
             }
         } else {
             if caterpillar.frames == 0 {
+                caterpillar.angle_offset = 0.0;
                 let mut angle = rand::random();
                 angle *= 2.0 * std::f32::consts::PI;
+                caterpillar.angle = angle;
                 transform.rotate(Quat::from_rotation_y(angle));
 
                 caterpillar.frames = random::range_i32(10, 500);
@@ -54,6 +66,25 @@ pub fn caterpillar_system(
             direction = transform.forward();
             caterpillar.frames -= 1;
         }
+
+        const ANGLE_MAX: f32 = 1.6;
+        const ANGLE_CHANGE: f32 = 0.04;
+        if caterpillar.angle_offset.abs() > ANGLE_MAX {
+            if caterpillar.angle_offset_direction == AngleOffsetDirection::Left {
+                caterpillar.angle_offset_direction = AngleOffsetDirection::Right;
+            } else {
+                caterpillar.angle_offset_direction = AngleOffsetDirection::Left;
+            }
+        }
+        if caterpillar.angle_offset_direction == AngleOffsetDirection::Left {
+            caterpillar.angle_offset = caterpillar.angle_offset - ANGLE_CHANGE;
+        } else {
+            caterpillar.angle_offset = caterpillar.angle_offset + ANGLE_CHANGE;
+        }
+
+        transform.rotation = Quat::from_rotation_y(
+            caterpillar.angle + caterpillar.angle_offset,
+        );
 
         transform.translation += direction * caterpillar.speed * time.delta_seconds();
 
@@ -214,6 +245,9 @@ pub fn setup_caterpillars(
                 frames: 0,
                 name: random::from_vec(&config.names),
                 description: random::from_vec(&config.thoughts),
+                angle: 0.0,
+                angle_offset: 0.0,
+                angle_offset_direction: AngleOffsetDirection::Left,
             })
             .with_children(|parent| {
                 // nose
