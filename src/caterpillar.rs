@@ -1,6 +1,4 @@
-use crate::{
-    collision, config, dynamic_config::DynamicConfig, foliage::Food, random, toast::ToastEvent,
-};
+use crate::{collision, dynamic_config::DynamicConfig, foliage::Food, random, toast::ToastEvent};
 use bevy::prelude::*;
 use bevy_mod_picking::*;
 
@@ -155,17 +153,15 @@ pub fn setup_caterpillars(
         ..default()
     });
 
-    for _ in 0..config::STARTING_CATERPILLARS {
-        let mut starting_vec = random::vec3(config::STARTING_CATERPILLAR_RADIUS);
+    for _ in 0..config.starting_caterpillars {
+        let mut starting_vec = random::vec3(config.starting_caterpillar_radius);
         starting_vec.y = 3.0;
         let starting_transform = Transform::default().with_translation(starting_vec);
 
         let mut part_entity_option: Option<Entity> = Option::None;
 
-        let length = random::range_i32(
-            config::CATERPILLAR_MIN_LENGTH,
-            config::CATERPILLAR_MAX_LENGTH,
-        );
+        let length =
+            random::range_i32(config.caterpillar_min_length, config.caterpillar_max_length);
         for _ in 1..length {
             let caterpillar_part = CaterpillarPart {
                 next: part_entity_option,
@@ -210,8 +206,8 @@ pub fn setup_caterpillars(
             .insert(PickableBundle::default())
             .insert(CaterpillarHead {
                 speed: random::range_f32(
-                    config::CATERPILLAR_MIN_SPEED,
-                    config::CATERPILLAR_MAX_SPEED,
+                    config.caterpillar_min_speed,
+                    config.caterpillar_max_speed,
                 ),
                 next: part_entity_option,
                 manually_controlled: false,
