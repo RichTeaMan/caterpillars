@@ -22,6 +22,8 @@ const TIMESTEP_1_PER_SECOND: f64 = 1.0;
 
 #[derive(Clone, Eq, PartialEq, Debug, Hash)]
 pub enum AppState {
+    Boot,
+    ConfigLoad,
     PreLoad,
     Loading,
     Level,
@@ -29,6 +31,7 @@ pub enum AppState {
 
 fn main() {
     App::new()
+        .add_state(AppState::Boot)
         .add_event::<ToastEvent>()
         .insert_resource(ClearColor(Color::rgb(0.53, 0.80, 0.92)))
         .insert_resource(WindowDescriptor {
@@ -43,16 +46,18 @@ fn main() {
         .add_plugin(JsonAssetPlugin::<DynamicConfig>::new(&["json"]))
         .add_system(bevy::input::system::exit_on_esc_system)
         .add_system(toast::toast_system)
-        .add_startup_system_to_stage(
-            StartupStage::PreStartup,
-            dynamic_config::create_dynamic_config,
+        .add_system_set(
+            SystemSet::on_update(AppState::Boot)
+                .with_system(dynamic_config::create_dynamic_config)
         )
-        .add_startup_system_to_stage(StartupStage::PreStartup, foliage::setup_foliage_assets)
-        .add_startup_system_to_stage(StartupStage::Startup, dynamic_config::load_dynamic_config)
-        .add_state(AppState::PreLoad)
+        .add_system_set(
+            SystemSet::on_update(AppState::ConfigLoad)
+                .with_system(dynamic_config::load_dynamic_config),
+        )
         .add_system_set(
             SystemSet::on_update(AppState::PreLoad)
-                .with_system(dynamic_config::load_dynamic_config),
+                .with_system(foliage::setup_foliage_assets)
+                .with_system(preloading_completed)
         )
         .add_system_set(
             SystemSet::on_enter(AppState::Loading)
@@ -135,6 +140,10 @@ fn window_resize_system(mut windows: ResMut<Windows>, keys: Res<Input<KeyCode>>)
     }
 }
 
+fn preloading_completed(mut app_state: ResMut<State<AppState>>) {
+    app_state.set(AppState::Loading).unwrap();
+}
+
 fn loading_completed(mut app_state: ResMut<State<AppState>>) {
     app_state.set(AppState::Level).unwrap();
 }
@@ -143,9 +152,10 @@ fn setup_scene(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
+    config: Res<DynamicConfig>,
 ) {
     let ground_plane_handle = meshes.add(Mesh::from(shape::Plane {
-        size: config::PLANE_SIZE,
+        size: config.plane_size,
     }));
 
     let ground_material_handle = materials.add(StandardMaterial {
@@ -162,17 +172,17 @@ fn setup_scene(
     });
 
     // directional 'sun' light
-    const HALF_SIZE: f32 = config::PLANE_SIZE / 2.0;
+    let half_size: f32 = config.plane_size / 2.0;
     commands.spawn_bundle(DirectionalLightBundle {
         directional_light: DirectionalLight {
-            shadows_enabled: config::ENABLE_SHADOWS,
+            shadows_enabled: config.enable_shadows,
             shadow_projection: OrthographicProjection {
-                left: -HALF_SIZE,
-                right: HALF_SIZE,
-                bottom: -HALF_SIZE,
-                top: HALF_SIZE,
-                near: -100.0 * HALF_SIZE,
-                far: 100.0 * HALF_SIZE,
+                left: -half_size,
+                right: half_size,
+                bottom: -half_size,
+                top: half_size,
+                near: -100.0 * half_size,
+                far: 100.0 * half_size,
                 ..default()
             },
             ..default()

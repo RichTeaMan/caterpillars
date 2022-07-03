@@ -1,4 +1,15 @@
 {
+    "planeSize": 5000.0,
+    "startingCaterpillars": 20,
+    "startingCaterpillarRadius": 100.0,
+    "startingBushes": 20000,
+    "startingTrees": 200,
+    "treeHeight": 100.0,
+    "caterpillarMinLength": 3,
+    "caterpillarMaxLength": 20,
+    "caterpillarMinSpeed": 0.5,
+    "caterpillarMaxSpeed": 50.0,
+    "enableShadows": false,
     "names": [
         "Ambrose",
         "Annie",
