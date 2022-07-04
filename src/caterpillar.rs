@@ -59,7 +59,7 @@ pub fn caterpillar_system(
                 caterpillar.angle = angle;
                 transform.rotate(Quat::from_rotation_y(angle));
 
-                caterpillar.frames = random::range_i32(10, 500);
+                caterpillar.frames = random::range_i32(48000, 50000);
 
                 caterpillar.description = random::from_vec(&dynamic_config.thoughts);
             }
@@ -68,7 +68,7 @@ pub fn caterpillar_system(
         }
 
         const ANGLE_MAX: f32 = 1.6;
-        const ANGLE_CHANGE: f32 = 0.04;
+        const ANGLE_CHANGE: f32 = 0.001;
         if caterpillar.angle_offset.abs() > ANGLE_MAX {
             if caterpillar.angle_offset_direction == AngleOffsetDirection::Left {
                 caterpillar.angle_offset_direction = AngleOffsetDirection::Right;
@@ -76,10 +76,11 @@ pub fn caterpillar_system(
                 caterpillar.angle_offset_direction = AngleOffsetDirection::Left;
             }
         }
+        let dyn_angle_change = (1.0 - ((caterpillar.angle_offset.abs() - (ANGLE_MAX / 2.0))).abs().asin()) * 0.01 + ANGLE_CHANGE;
         if caterpillar.angle_offset_direction == AngleOffsetDirection::Left {
-            caterpillar.angle_offset = caterpillar.angle_offset - ANGLE_CHANGE;
+            caterpillar.angle_offset = caterpillar.angle_offset - dyn_angle_change;
         } else {
-            caterpillar.angle_offset = caterpillar.angle_offset + ANGLE_CHANGE;
+            caterpillar.angle_offset = caterpillar.angle_offset + dyn_angle_change;
         }
 
         transform.rotation = Quat::from_rotation_y(
