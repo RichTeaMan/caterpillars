@@ -1,6 +1,9 @@
+use std::time::Duration;
+
 use crate::{collision, dynamic_config::DynamicConfig, foliage::Food, random, toast::ToastEvent};
 use bevy::prelude::*;
 use bevy_mod_picking::*;
+use bevy_tweening::{lens::TransformPositionLens, *};
 
 #[derive(PartialEq, Eq)]
 pub enum AngleOffsetDirection {
@@ -76,16 +79,19 @@ pub fn caterpillar_system(
                 caterpillar.angle_offset_direction = AngleOffsetDirection::Left;
             }
         }
-        let dyn_angle_change = (1.0 - ((caterpillar.angle_offset.abs() - (ANGLE_MAX / 2.0))).abs().asin()) * 0.01 + ANGLE_CHANGE;
+        let dyn_angle_change = (1.0
+            - (caterpillar.angle_offset.abs() - (ANGLE_MAX / 2.0))
+                .abs()
+                .asin())
+            * 0.01
+            + ANGLE_CHANGE;
         if caterpillar.angle_offset_direction == AngleOffsetDirection::Left {
             caterpillar.angle_offset = caterpillar.angle_offset - dyn_angle_change;
         } else {
             caterpillar.angle_offset = caterpillar.angle_offset + dyn_angle_change;
         }
 
-        transform.rotation = Quat::from_rotation_y(
-            caterpillar.angle + caterpillar.angle_offset,
-        );
+        transform.rotation = Quat::from_rotation_y(caterpillar.angle + caterpillar.angle_offset);
 
         transform.translation += direction * caterpillar.speed * time.delta_seconds();
 
@@ -199,6 +205,42 @@ pub fn setup_caterpillars(
                 next: part_entity_option,
             };
 
+            // leg tween
+
+            // Create a single animation (tween) to move an entity.
+            let leg_tween_l = Tween::new(
+                // Use a quadratic easing on both endpoints.
+                EaseFunction::QuadraticInOut,
+                // Animation time (one way only; for ping-pong it takes 2 seconds
+                // to come back to start).
+                Duration::from_millis(750),
+                // The lens gives the Animator access to the Transform component,
+                // to animate it. It also contains the start and end values associated
+                // with the animation ratios 0. and 1.
+                TransformPositionLens {
+                    start: Vec3::new(3.5, -2.0, -1.5),
+                    end: Vec3::new(3.5, -2.0, 1.5),
+                },
+            ).with_repeat_strategy(RepeatStrategy::MirroredRepeat);
+
+            // leg tween
+
+            // Create a single animation (tween) to move an entity.
+            let leg_tween_r = Tween::new(
+                // Use a quadratic easing on both endpoints.
+                EaseFunction::QuadraticInOut,
+                // Animation time (one way only; for ping-pong it takes 2 seconds
+                // to come back to start).
+                Duration::from_secs(1),
+                // The lens gives the Animator access to the Transform component,
+                // to animate it. It also contains the start and end values associated
+                // with the animation ratios 0. and 1.
+                TransformPositionLens {
+                    start: Vec3::new(-3.5, -2.0, -1.5),
+                    end: Vec3::new(-3.5, -2.0, 1.5),
+                },
+            ).with_repeat_strategy(RepeatStrategy::MirroredRepeat);
+
             let part_entity = commands
                 .spawn(PbrBundle {
                     mesh: sphere_handle.clone(),
@@ -209,18 +251,22 @@ pub fn setup_caterpillars(
                 .insert(caterpillar_part)
                 .with_children(|parent| {
                     // body spheres
-                    parent.spawn(PbrBundle {
-                        mesh: foot_sphere_handle.clone(),
-                        material: foot_sphere_material_handle.clone(),
-                        transform: Transform::from_xyz(3.5, -2.0, 0.0),
-                        ..default()
-                    });
-                    parent.spawn(PbrBundle {
-                        mesh: foot_sphere_handle.clone(),
-                        material: foot_sphere_material_handle.clone(),
-                        transform: Transform::from_xyz(-3.5, -2.0, 0.0),
-                        ..default()
-                    });
+                    parent
+                        .spawn(PbrBundle {
+                            mesh: foot_sphere_handle.clone(),
+                            material: foot_sphere_material_handle.clone(),
+                            transform: Transform::from_xyz(3.5, -2.0, 0.0),
+                            ..default()
+                        })
+                        .insert(Animator::new(leg_tween_l));
+                    parent
+                        .spawn(PbrBundle {
+                            mesh: foot_sphere_handle.clone(),
+                            material: foot_sphere_material_handle.clone(),
+                            transform: Transform::from_xyz(-3.5, -2.0, 0.0),
+                            ..default()
+                        })
+                        .insert(Animator::new(leg_tween_r));
                 })
                 .id();
 

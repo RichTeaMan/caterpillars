@@ -14,6 +14,7 @@ use std::cell::RefCell;
 use bevy::{diagnostic::FrameTimeDiagnosticsPlugin, prelude::*, time::FixedTimestep};
 use bevy_common_assets::json::JsonAssetPlugin;
 use bevy_mod_picking::*;
+use bevy_tweening::*;
 use dynamic_config::DynamicConfig;
 use toast::ToastEvent;
 use wasm_bindgen::prelude::*;
@@ -43,6 +44,7 @@ fn main() {
             },
             ..default()
         }))
+        .add_plugin(TweeningPlugin)
         .add_plugin(FrameTimeDiagnosticsPlugin)
         .add_plugin(PickingPlugin)
         .add_plugin(InteractablePickingPlugin)
