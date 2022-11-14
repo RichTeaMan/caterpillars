@@ -10,6 +10,12 @@ Caterpillars can be run locally using Cargo:
 cargo run
 ```
 
+Specfic configurations can be run with the JSON file name as a parameter:
+
+```bash
+cargo run -- caterpillar.json
+```
+
 The web assembly version can also be run locally:
 
 ```bash
