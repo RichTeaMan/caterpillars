@@ -28,9 +28,9 @@ pub struct DebugUi;
 pub fn infotext_system(mut commands: Commands, asset_server: Res<AssetServer>) {
     let mono_font = asset_server.load("fonts/FiraMono-Regular.ttf");
     let regular_font: Handle<Font> = asset_server.load("fonts/FiraSans-Bold.ttf");
-    commands.spawn_bundle(Camera2dBundle::default());
+    commands.spawn(Camera2dBundle::default());
     commands
-        .spawn_bundle(TextBundle {
+        .spawn(TextBundle {
             style: Style {
                 align_self: AlignSelf::FlexEnd,
                 position_type: PositionType::Absolute,
@@ -57,7 +57,7 @@ pub fn infotext_system(mut commands: Commands, asset_server: Res<AssetServer>) {
         .insert(TextChanges);
 
     commands
-        .spawn_bundle(TextBundle {
+        .spawn(TextBundle {
             style: Style {
                 align_self: AlignSelf::FlexEnd,
                 position_type: PositionType::Absolute,
@@ -84,7 +84,7 @@ pub fn infotext_system(mut commands: Commands, asset_server: Res<AssetServer>) {
         .insert(NameUi);
 
     commands
-        .spawn_bundle(TextBundle {
+        .spawn(TextBundle {
             style: Style {
                 align_self: AlignSelf::FlexEnd,
                 position_type: PositionType::Absolute,
@@ -111,7 +111,7 @@ pub fn infotext_system(mut commands: Commands, asset_server: Res<AssetServer>) {
         .insert(DescriptionUi);
 
     commands
-        .spawn_bundle(TextBundle {
+        .spawn(TextBundle {
             style: Style {
                 align_self: AlignSelf::FlexEnd,
                 position_type: PositionType::Absolute,

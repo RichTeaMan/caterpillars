@@ -16,7 +16,7 @@ pub struct DynamicConfigHandleHolder(Handle<DynamicConfig>);
 
 pub fn create_dynamic_config(mut commands: Commands, asset_server: Res<AssetServer>) {
     let data_handle: Handle<DynamicConfig> = asset_server.load("data.json");
-    commands.insert_resource(DynamicConfigHandleHolder { 0: data_handle });
+    commands.insert_resource(DynamicConfigHandleHolder(data_handle));
     info!("Config created.");
 }
 

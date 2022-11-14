@@ -157,7 +157,7 @@ fn setup_scene(
         ..default()
     });
 
-    commands.spawn_bundle(PbrBundle {
+    commands.spawn(PbrBundle {
         mesh: ground_plane_handle,
         material: ground_material_handle,
         transform: Transform::from_xyz(0.0, 0.0, 0.0),
@@ -166,7 +166,7 @@ fn setup_scene(
 
     // directional 'sun' light
     const HALF_SIZE: f32 = config::PLANE_SIZE / 2.0;
-    commands.spawn_bundle(DirectionalLightBundle {
+    commands.spawn(DirectionalLightBundle {
         directional_light: DirectionalLight {
             shadows_enabled: config::ENABLE_SHADOWS,
             shadow_projection: OrthographicProjection {

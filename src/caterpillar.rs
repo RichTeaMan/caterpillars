@@ -64,7 +64,7 @@ pub fn caterpillar_system(
 
         while let Some(x) = caterpillar_part {
             if let Ok((mut part_transform, part)) = part_query.get_mut(x) {
-                let _ = part_transform.look_at(parent_transform, Vec3::Y);
+                part_transform.look_at(parent_transform, Vec3::Y);
 
                 let fwd = part_transform.forward();
 
@@ -172,7 +172,7 @@ pub fn setup_caterpillars(
             };
 
             let part_entity = commands
-                .spawn_bundle(PbrBundle {
+                .spawn(PbrBundle {
                     mesh: sphere_handle.clone(),
                     material: sphere_material_handle.clone(),
                     transform: starting_transform,
@@ -181,13 +181,13 @@ pub fn setup_caterpillars(
                 .insert(caterpillar_part)
                 .with_children(|parent| {
                     // body spheres
-                    parent.spawn_bundle(PbrBundle {
+                    parent.spawn(PbrBundle {
                         mesh: foot_sphere_handle.clone(),
                         material: foot_sphere_material_handle.clone(),
                         transform: Transform::from_xyz(3.5, -2.0, 0.0),
                         ..default()
                     });
-                    parent.spawn_bundle(PbrBundle {
+                    parent.spawn(PbrBundle {
                         mesh: foot_sphere_handle.clone(),
                         material: foot_sphere_material_handle.clone(),
                         transform: Transform::from_xyz(-3.5, -2.0, 0.0),
@@ -201,13 +201,13 @@ pub fn setup_caterpillars(
 
         // head sphere
         commands
-            .spawn_bundle(PbrBundle {
+            .spawn(PbrBundle {
                 mesh: head_sphere_handle.clone(),
                 material: head_material_handle.clone(),
                 transform: starting_transform,
                 ..default()
             })
-            .insert_bundle(PickableBundle::default())
+            .insert(PickableBundle::default())
             .insert(CaterpillarHead {
                 speed: random::range_f32(
                     config::CATERPILLAR_MIN_SPEED,
@@ -221,7 +221,7 @@ pub fn setup_caterpillars(
             })
             .with_children(|parent| {
                 // nose
-                parent.spawn_bundle(PbrBundle {
+                parent.spawn(PbrBundle {
                     mesh: nose_sphere_handle.clone(),
                     material: nose_material_handle.clone(),
                     transform: Transform::from_xyz(0.0, 0.0, -head_radius),
@@ -230,7 +230,7 @@ pub fn setup_caterpillars(
                 let eye_offset_x = (head_radius / 2.0) - 0.3;
                 let eye_offset_y = head_radius / 2.0;
                 // left eye
-                parent.spawn_bundle(PbrBundle {
+                parent.spawn(PbrBundle {
                     mesh: eye_sphere_handle.clone(),
                     material: eye_material_handle.clone(),
                     transform: Transform::from_xyz(
@@ -241,7 +241,7 @@ pub fn setup_caterpillars(
                     ..default()
                 });
                 // right eye
-                parent.spawn_bundle(PbrBundle {
+                parent.spawn(PbrBundle {
                     mesh: eye_sphere_handle.clone(),
                     material: eye_material_handle.clone(),
                     transform: Transform::from_xyz(

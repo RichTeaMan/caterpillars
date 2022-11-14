@@ -21,7 +21,7 @@ pub fn toast_system(
             commands.entity(toast_bundle.0).despawn();
         } else {
             toast_bundle.2.position.top = Val::Px(y_position);
-            y_position = y_position + y_margin;
+            y_position += y_margin;
         }
     }
 
@@ -29,10 +29,10 @@ pub fn toast_system(
 
     for ev in ev_levelup.iter() {
         let mut toast_event = ev.clone();
-        toast_event.expiry_tick = toast_event.expiry_tick + milliseconds;
+        toast_event.expiry_tick += milliseconds;
         info!("Toast: {}", ev.message);
         commands
-            .spawn_bundle(TextBundle {
+            .spawn(TextBundle {
                 style: Style {
                     align_self: AlignSelf::FlexEnd,
                     position_type: PositionType::Absolute,
@@ -57,7 +57,7 @@ pub fn toast_system(
                 ..default()
             })
             .insert(toast_event);
-        y_position = y_position + y_margin;
+        y_position += y_margin;
 
         /*
         match toast_manager.toast_events.add(ev.clone()) {

@@ -151,10 +151,10 @@ pub fn spawn_camera(mut commands: Commands) {
         pan_orbit.focus + rot_matrix.mul_vec3(Vec3::new(0.0, 0.0, pan_orbit.radius));
 
     commands
-        .spawn_bundle(Camera3dBundle {
+        .spawn(Camera3dBundle {
             transform: start_transform,
             ..Default::default()
         })
         .insert(pan_orbit)
-        .insert_bundle(PickingCameraBundle::default());
+        .insert(PickingCameraBundle::default());
 }

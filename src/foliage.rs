@@ -90,26 +90,26 @@ fn create_tree_prv<'w, 's>(
     tree_sphere_tranform_3.scale = Vec3::new(3.0, 3.0, 3.0);
 
     commands
-        .spawn_bundle(PbrBundle {
+        .spawn(PbrBundle {
             mesh: foliage_assets.tree_box_handle.clone(),
             material: foliage_assets.tree_trunk_material_handle.clone(),
             transform: starting_transform,
             ..default()
         })
         .with_children(|parent| {
-            parent.spawn_bundle(PbrBundle {
+            parent.spawn(PbrBundle {
                 mesh: foliage_assets.tree_green_mesh_handle.clone(),
                 material: foliage_assets.tree_green_material_handle.clone(),
                 transform: tree_sphere_tranform_1,
                 ..default()
             });
-            parent.spawn_bundle(PbrBundle {
+            parent.spawn(PbrBundle {
                 mesh: foliage_assets.tree_green_mesh_handle.clone(),
                 material: foliage_assets.tree_green_material_handle.clone(),
                 transform: tree_sphere_tranform_2,
                 ..default()
             });
-            parent.spawn_bundle(PbrBundle {
+            parent.spawn(PbrBundle {
                 mesh: foliage_assets.tree_green_mesh_handle.clone(),
                 material: foliage_assets.tree_green_material_handle.clone(),
                 transform: tree_sphere_tranform_3,
@@ -133,7 +133,7 @@ fn create_bush_prv<'w, 's>(
     let starting_transform = Transform::default().with_translation(starting_vec);
 
     commands
-        .spawn_bundle(PbrBundle {
+        .spawn(PbrBundle {
             mesh: foliage_assets.bush_handle.clone(),
             material: foliage_assets.bush_material_handle.clone(),
             transform: starting_transform,
