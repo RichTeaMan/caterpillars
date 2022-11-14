@@ -33,7 +33,7 @@ pub fn pan_orbit_camera(
     mut ev_scroll: EventReader<MouseWheel>,
     input_mouse: Res<Input<MouseButton>>,
     keys: Res<Input<KeyCode>>,
-    mut query: Query<(&mut PanOrbitCamera, &mut Transform, &PerspectiveProjection)>,
+    mut query: Query<(&mut PanOrbitCamera, &mut Transform, &Projection)>,
 ) {
     // change input mapping for orbit and panning here
     let orbit_button = MouseButton::Right;
@@ -63,6 +63,10 @@ pub fn pan_orbit_camera(
     }
     if input_mouse.just_released(orbit_button) || input_mouse.just_pressed(orbit_button) {
         orbit_button_changed = true;
+    }
+
+    if query.is_empty() {
+        error!("Camera query is empty, camera manipulation will not work.");
     }
 
     for (mut pan_orbit, mut transform, projection) in query.iter_mut() {
@@ -99,11 +103,12 @@ pub fn pan_orbit_camera(
             any = true;
             // make panning distance independent of resolution and FOV,
             let window = get_primary_window_size(&windows);
-            pan *= Vec2::new(projection.fov * projection.aspect_ratio, projection.fov) / window;
+            if let Projection::Perspective(projection) = projection {
+                pan *= Vec2::new(projection.fov * projection.aspect_ratio, projection.fov) / window;
+            }
             // translate by local axes
             let right = transform.rotation * Vec3::X * -pan.x;
             let up = transform.rotation * Vec3::Y * pan.y;
-            //transform.translation.
             // make panning proportional to distance away from focus point
             let mut translation = (right + up) * pan_orbit.radius;
             // stops focus point from keep upwards, eventually making rotations problematic.
