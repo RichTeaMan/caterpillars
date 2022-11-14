@@ -28,7 +28,6 @@ pub struct DebugUi;
 pub fn infotext_system(mut commands: Commands, asset_server: Res<AssetServer>) {
     let mono_font = asset_server.load("fonts/FiraMono-Regular.ttf");
     let regular_font: Handle<Font> = asset_server.load("fonts/FiraSans-Bold.ttf");
-    commands.spawn(Camera2dBundle::default());
     commands
         .spawn(TextBundle {
             style: Style {
