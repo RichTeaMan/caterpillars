@@ -13,7 +13,7 @@ pub fn toast_system(
     mut toast_query: Query<(Entity, &mut ToastEvent, &mut Style)>,
     time: Res<Time>,
 ) {
-    let milliseconds = time.time_since_startup().as_millis();
+    let milliseconds = time.elapsed().as_millis();
     let mut y_position = 50.0;
     let y_margin = 30.0;
     for mut toast_bundle in toast_query.iter_mut() {
@@ -36,9 +36,9 @@ pub fn toast_system(
                 style: Style {
                     align_self: AlignSelf::FlexEnd,
                     position_type: PositionType::Absolute,
-                    position: Rect {
-                        top: Val::Px(y_position),
+                    position: UiRect {
                         right: Val::Px(100.0),
+                        top: Val::Px(y_position),
                         ..default()
                     },
                     ..default()

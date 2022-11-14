@@ -5,6 +5,7 @@ use crate::{config, random};
 #[derive(Component)]
 pub struct Food;
 
+#[derive(Resource)]
 pub struct FoliageAssets {
     pub tree_box_handle: Handle<Mesh>,
     pub tree_trunk_material_handle: Handle<StandardMaterial>,

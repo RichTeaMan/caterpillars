@@ -11,7 +11,7 @@ mod ui;
 
 use std::cell::RefCell;
 
-use bevy::{core::FixedTimestep, diagnostic::FrameTimeDiagnosticsPlugin, prelude::*};
+use bevy::{diagnostic::FrameTimeDiagnosticsPlugin, prelude::*, time::FixedTimestep};
 use bevy_common_assets::json::JsonAssetPlugin;
 use bevy_mod_picking::*;
 use dynamic_config::DynamicConfig;
@@ -31,17 +31,20 @@ fn main() {
     App::new()
         .add_event::<ToastEvent>()
         .insert_resource(ClearColor(Color::rgb(0.53, 0.80, 0.92)))
-        .insert_resource(WindowDescriptor {
-            width: config::START_RESOLUTION_WIDTH,
-            height: config::START_RESOLUTION_HEIGHT,
-            ..Default::default()
-        })
-        .add_plugins(DefaultPlugins)
+        //.add_plugins(DefaultPlugins)
+        .add_plugins(DefaultPlugins.set(WindowPlugin {
+            window: WindowDescriptor {
+                width: config::START_RESOLUTION_WIDTH,
+                height: config::START_RESOLUTION_HEIGHT,
+                ..default()
+            },
+            ..default()
+        }))
         .add_plugin(FrameTimeDiagnosticsPlugin)
         .add_plugin(PickingPlugin)
         .add_plugin(InteractablePickingPlugin)
         .add_plugin(JsonAssetPlugin::<DynamicConfig>::new(&["json"]))
-        .add_system(bevy::input::system::exit_on_esc_system)
+        .add_system(bevy::window::close_on_esc)
         .add_system(toast::toast_system)
         .add_startup_system_to_stage(
             StartupStage::PreStartup,
@@ -60,9 +63,9 @@ fn main() {
                 .with_system(foliage::setup_foliage)
                 .with_system(caterpillar::setup_caterpillars)
                 .with_system(camera::spawn_camera)
-                .with_system(ui::infotext_system)
-                .with_system(loading_completed),
+                .with_system(ui::infotext_system),
         )
+        .add_system_set(SystemSet::on_update(AppState::Loading).with_system(loading_completed))
         .add_system_set(
             SystemSet::on_update(AppState::Level)
                 .with_system(caterpillar::caterpillar_system)

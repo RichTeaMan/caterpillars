@@ -28,13 +28,13 @@ pub struct DebugUi;
 pub fn infotext_system(mut commands: Commands, asset_server: Res<AssetServer>) {
     let mono_font = asset_server.load("fonts/FiraMono-Regular.ttf");
     let regular_font: Handle<Font> = asset_server.load("fonts/FiraSans-Bold.ttf");
-    commands.spawn_bundle(UiCameraBundle::default());
+    commands.spawn_bundle(Camera2dBundle::default());
     commands
         .spawn_bundle(TextBundle {
             style: Style {
                 align_self: AlignSelf::FlexEnd,
                 position_type: PositionType::Absolute,
-                position: Rect {
+                position: UiRect {
                     bottom: Val::Px(5.0),
                     right: Val::Px(15.0),
                     ..default()
@@ -61,7 +61,7 @@ pub fn infotext_system(mut commands: Commands, asset_server: Res<AssetServer>) {
             style: Style {
                 align_self: AlignSelf::FlexEnd,
                 position_type: PositionType::Absolute,
-                position: Rect {
+                position: UiRect {
                     top: Val::Px(300.0),
                     left: Val::Px(15.0),
                     ..default()
@@ -88,7 +88,7 @@ pub fn infotext_system(mut commands: Commands, asset_server: Res<AssetServer>) {
             style: Style {
                 align_self: AlignSelf::FlexEnd,
                 position_type: PositionType::Absolute,
-                position: Rect {
+                position: UiRect {
                     top: Val::Px(330.0),
                     left: Val::Px(15.0),
                     ..default()
@@ -115,7 +115,7 @@ pub fn infotext_system(mut commands: Commands, asset_server: Res<AssetServer>) {
             style: Style {
                 align_self: AlignSelf::FlexEnd,
                 position_type: PositionType::Absolute,
-                position: Rect {
+                position: UiRect {
                     top: Val::Px(5.0),
                     left: Val::Px(5.0),
                     ..default()
@@ -191,7 +191,7 @@ pub fn update_debug_ui_system(
         text.sections[0].value = format!("Resolution:{}, {}", resolution.x, resolution.y);
     }
     for mut text in style_query.iter_mut() {
-        text.position = Rect {
+        text.position = UiRect {
             top: Val::Px(5.0),
             left: Val::Px(5.0),
             ..default()
