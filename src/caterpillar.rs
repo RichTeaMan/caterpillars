@@ -1,6 +1,9 @@
 use std::time::Duration;
 
-use crate::{collision, dynamic_config::DynamicConfig, foliage::Food, random, toast::ToastEvent};
+use crate::{
+    camera::FollowCamera, collision, dynamic_config::DynamicConfig, foliage::Food, random,
+    toast::ToastEvent, ui::SelectedCaterpillar,
+};
 use bevy::prelude::*;
 use bevy_mod_picking::*;
 use bevy_tweening::{lens::TransformPositionLens, *};
@@ -317,5 +320,15 @@ pub fn setup_caterpillars(
                     ..default()
                 });
             });
+    }
+}
+
+pub fn camera_follow_caterpillar_system(
+    mut follow_camera: ResMut<FollowCamera>,
+    selected_caterpillar_query: Query<(&SelectedCaterpillar, &Transform)>,
+) {
+    for (_, transform) in selected_caterpillar_query.iter() {
+        follow_camera.translation = transform.translation;
+        follow_camera.enabled = true;
     }
 }

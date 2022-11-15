@@ -7,6 +7,12 @@ use bevy::{
 };
 use bevy_mod_picking::*;
 
+#[derive(Resource, Default)]
+pub struct FollowCamera {
+    pub enabled: bool,
+    pub translation: Vec3,
+}
+
 /// Tags an entity as capable of panning and orbiting.
 #[derive(Component)]
 pub struct PanOrbitCamera {
@@ -33,6 +39,7 @@ pub fn pan_orbit_camera(
     mut ev_scroll: EventReader<MouseWheel>,
     input_mouse: Res<Input<MouseButton>>,
     keys: Res<Input<KeyCode>>,
+    follow_camera: Res<FollowCamera>,
     mut query: Query<(&mut PanOrbitCamera, &mut Transform, &Projection)>,
 ) {
     // change input mapping for orbit and panning here
@@ -77,9 +84,7 @@ pub fn pan_orbit_camera(
             pan_orbit.upside_down = up.y <= 0.0;
         }
 
-        let mut any = false;
         if rotation_move.length_squared() > 0.0 {
-            any = true;
             let window = get_primary_window_size(&windows);
             let delta_x = {
                 let delta = rotation_move.x / window.x * std::f32::consts::PI * 2.0;
@@ -100,7 +105,6 @@ pub fn pan_orbit_camera(
                 transform.rotation *= Quat::from_rotation_x(-f32::abs(delta_y));
             }
         } else if pan.length_squared() > 0.0 {
-            any = true;
             // make panning distance independent of resolution and FOV,
             let window = get_primary_window_size(&windows);
             if let Projection::Perspective(projection) = projection {
@@ -115,7 +119,6 @@ pub fn pan_orbit_camera(
             translation.y = 0.0;
             pan_orbit.focus += translation;
         } else if scroll.abs() > 0.0 {
-            any = true;
             pan_orbit.radius -= scroll * pan_orbit.radius * 0.2;
             // don't allow zoom too far.
             pan_orbit.radius = f32::max(pan_orbit.radius, 20.0);
@@ -124,14 +127,16 @@ pub fn pan_orbit_camera(
             pan_orbit.radius = f32::min(pan_orbit.radius, 2500.0);
         }
 
-        if any {
-            // emulating parent/child to make the yaw/y-axis rotation behave like a turntable
-            // parent = x and y rotation
-            // child = z-offset
-            let rot_matrix = Mat3::from_quat(transform.rotation);
-            transform.translation =
-                pan_orbit.focus + rot_matrix.mul_vec3(Vec3::new(0.0, 0.0, pan_orbit.radius));
+        let mut focus = pan_orbit.focus;
+        if follow_camera.enabled {
+            focus = follow_camera.translation;
         }
+
+        // emulating parent/child to make the yaw/y-axis rotation behave like a turntable
+        // parent = x and y rotation
+        // child = z-offset
+        let rot_matrix = Mat3::from_quat(transform.rotation);
+        transform.translation = focus + rot_matrix.mul_vec3(Vec3::new(0.0, 0.0, pan_orbit.radius));
     }
 }
 

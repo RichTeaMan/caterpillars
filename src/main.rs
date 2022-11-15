@@ -15,6 +15,7 @@ use bevy::{diagnostic::FrameTimeDiagnosticsPlugin, prelude::*, time::FixedTimest
 use bevy_common_assets::json::JsonAssetPlugin;
 use bevy_mod_picking::*;
 use bevy_tweening::*;
+use camera::FollowCamera;
 use dynamic_config::DynamicConfig;
 use toast::ToastEvent;
 use wasm_bindgen::prelude::*;
@@ -35,7 +36,7 @@ fn main() {
         .add_state(AppState::Boot)
         .add_event::<ToastEvent>()
         .insert_resource(ClearColor(Color::rgb(0.53, 0.80, 0.92)))
-        //.add_plugins(DefaultPlugins)
+        .insert_resource(FollowCamera::default())
         .add_plugins(DefaultPlugins.set(WindowPlugin {
             window: WindowDescriptor {
                 width: config::START_RESOLUTION_WIDTH,
@@ -75,6 +76,7 @@ fn main() {
         .add_system_set(
             SystemSet::on_update(AppState::Level)
                 .with_system(caterpillar::caterpillar_system)
+                .with_system(caterpillar::camera_follow_caterpillar_system)
                 .with_system(camera::pan_orbit_camera)
                 .with_system(ui::change_text_system)
                 .with_system(ui::update_flavour_text_system)
