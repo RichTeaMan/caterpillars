@@ -56,7 +56,7 @@ pub fn create_dynamic_config(
         }
     }
     info!("Using data from {}.", data_file);
-    
+
     let data_handle: Handle<DynamicConfig> = asset_server.load(data_file.as_str());
     commands.insert_resource(DynamicConfigHandleHolder(data_handle));
     app_state.set(AppState::ConfigLoad).unwrap();

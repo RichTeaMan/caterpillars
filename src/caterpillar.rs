@@ -213,7 +213,8 @@ pub fn setup_caterpillars(
                     start: Vec3::new(-3.5, -2.0, -1.5),
                     end: Vec3::new(-3.5, -2.0, 1.5),
                 },
-            ).with_repeat_strategy(RepeatStrategy::MirroredRepeat)
+            )
+            .with_repeat_strategy(RepeatStrategy::MirroredRepeat)
             .with_repeat_count(RepeatCount::Infinite);
 
             // leg tween
@@ -223,8 +224,9 @@ pub fn setup_caterpillars(
                 TransformPositionLens {
                     start: Vec3::new(3.5, -2.0, -1.5),
                     end: Vec3::new(3.5, -2.0, 1.5),
-            },
-            ).with_repeat_strategy(RepeatStrategy::MirroredRepeat)
+                },
+            )
+            .with_repeat_strategy(RepeatStrategy::MirroredRepeat)
             .with_repeat_count(RepeatCount::Infinite);
 
             let part_entity = commands
