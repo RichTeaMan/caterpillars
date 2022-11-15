@@ -206,40 +206,26 @@ pub fn setup_caterpillars(
             };
 
             // leg tween
-
-            // Create a single animation (tween) to move an entity.
             let leg_tween_l = Tween::new(
-                // Use a quadratic easing on both endpoints.
                 EaseFunction::QuadraticInOut,
-                // Animation time (one way only; for ping-pong it takes 2 seconds
-                // to come back to start).
                 Duration::from_millis(750),
-                // The lens gives the Animator access to the Transform component,
-                // to animate it. It also contains the start and end values associated
-                // with the animation ratios 0. and 1.
-                TransformPositionLens {
-                    start: Vec3::new(3.5, -2.0, -1.5),
-                    end: Vec3::new(3.5, -2.0, 1.5),
-                },
-            ).with_repeat_strategy(RepeatStrategy::MirroredRepeat);
-
-            // leg tween
-
-            // Create a single animation (tween) to move an entity.
-            let leg_tween_r = Tween::new(
-                // Use a quadratic easing on both endpoints.
-                EaseFunction::QuadraticInOut,
-                // Animation time (one way only; for ping-pong it takes 2 seconds
-                // to come back to start).
-                Duration::from_secs(1),
-                // The lens gives the Animator access to the Transform component,
-                // to animate it. It also contains the start and end values associated
-                // with the animation ratios 0. and 1.
                 TransformPositionLens {
                     start: Vec3::new(-3.5, -2.0, -1.5),
                     end: Vec3::new(-3.5, -2.0, 1.5),
                 },
-            ).with_repeat_strategy(RepeatStrategy::MirroredRepeat);
+            ).with_repeat_strategy(RepeatStrategy::MirroredRepeat)
+            .with_repeat_count(RepeatCount::Infinite);
+
+            // leg tween
+            let leg_tween_r = Tween::new(
+                EaseFunction::QuadraticInOut,
+                Duration::from_secs(1),
+                TransformPositionLens {
+                    start: Vec3::new(3.5, -2.0, -1.5),
+                    end: Vec3::new(3.5, -2.0, 1.5),
+            },
+            ).with_repeat_strategy(RepeatStrategy::MirroredRepeat)
+            .with_repeat_count(RepeatCount::Infinite);
 
             let part_entity = commands
                 .spawn(PbrBundle {
@@ -255,7 +241,7 @@ pub fn setup_caterpillars(
                         .spawn(PbrBundle {
                             mesh: foot_sphere_handle.clone(),
                             material: foot_sphere_material_handle.clone(),
-                            transform: Transform::from_xyz(3.5, -2.0, 0.0),
+                            transform: Transform::from_xyz(-3.5, -2.0, 0.0),
                             ..default()
                         })
                         .insert(Animator::new(leg_tween_l));
@@ -263,7 +249,7 @@ pub fn setup_caterpillars(
                         .spawn(PbrBundle {
                             mesh: foot_sphere_handle.clone(),
                             material: foot_sphere_material_handle.clone(),
-                            transform: Transform::from_xyz(-3.5, -2.0, 0.0),
+                            transform: Transform::from_xyz(3.5, -2.0, 0.0),
                             ..default()
                         })
                         .insert(Animator::new(leg_tween_r));
