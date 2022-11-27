@@ -1,4 +1,4 @@
-use std::time::Duration;
+use std::{f32::consts::PI, time::Duration};
 
 use crate::{
     camera::FollowCamera, collision, dynamic_config::DynamicConfig, foliage::Food, random,
@@ -6,7 +6,10 @@ use crate::{
 };
 use bevy::prelude::*;
 use bevy_mod_picking::*;
-use bevy_tweening::{lens::TransformPositionLens, *};
+use bevy_tweening::{
+    lens::{TransformPositionLens, TransformRotationLens},
+    *,
+};
 
 #[derive(PartialEq, Eq)]
 pub enum AngleOffsetDirection {
@@ -147,6 +150,7 @@ pub fn setup_caterpillars(
 ) {
     let head_radius = 2.0;
     let body_radius = 1.5;
+    let leg_length = 3.0;
     let head_sphere_handle = meshes.add(Mesh::from(shape::UVSphere {
         radius: head_radius,
         sectors: 16,
@@ -171,6 +175,15 @@ pub fn setup_caterpillars(
         radius: 0.25,
         sectors: 6,
         stacks: 6,
+    }));
+    let leg_mesh_handle = meshes.add(Mesh::from(shape::Capsule {
+        radius: 0.5,
+        //rings: 4,
+        depth: leg_length - 0.5,
+        //latitudes: 8,
+        //longitudes: 8,
+        //uv_profile: shape::CapsuleUvProfile::Aspect,
+        ..default()
     }));
     let head_material_handle = materials.add(StandardMaterial {
         base_color: Color::rgb(1.0, 0.0, 0.0),
@@ -208,8 +221,20 @@ pub fn setup_caterpillars(
                 next: part_entity_option,
             };
 
-            // leg tween
-            let leg_tween_l = Tween::new(
+            // right leg tween
+            let leg_tween_r = Tween::new(
+                EaseFunction::QuadraticInOut,
+                Duration::from_millis(750),
+                TransformRotationLens {
+                    start: Quat::from_euler(EulerRot::XYZ, 0.0, -0.5, 0.5 * PI),
+                    end: Quat::from_euler(EulerRot::XYZ, 0.0, 0.5, 0.5 * PI),
+                },
+            )
+            .with_repeat_strategy(RepeatStrategy::MirroredRepeat)
+            .with_repeat_count(RepeatCount::Infinite);
+
+            // foot tween
+            let foot_tween_l = Tween::new(
                 EaseFunction::QuadraticInOut,
                 Duration::from_millis(750),
                 TransformPositionLens {
@@ -220,8 +245,8 @@ pub fn setup_caterpillars(
             .with_repeat_strategy(RepeatStrategy::MirroredRepeat)
             .with_repeat_count(RepeatCount::Infinite);
 
-            // leg tween
-            let leg_tween_r = Tween::new(
+            // foot tween
+            let foot_tween_r = Tween::new(
                 EaseFunction::QuadraticInOut,
                 Duration::from_secs(1),
                 TransformPositionLens {
@@ -233,6 +258,7 @@ pub fn setup_caterpillars(
             .with_repeat_count(RepeatCount::Infinite);
 
             let part_entity = commands
+                // body sphere
                 .spawn(PbrBundle {
                     mesh: sphere_handle.clone(),
                     material: sphere_material_handle.clone(),
@@ -241,7 +267,31 @@ pub fn setup_caterpillars(
                 })
                 .insert(caterpillar_part)
                 .with_children(|parent| {
-                    // body spheres
+                    // right leg
+                    parent
+                        .spawn(SpatialBundle {
+                            transform: starting_transform.with_rotation(Quat::from_euler(
+                                EulerRot::XYZ,
+                                0.0,
+                                0.5,
+                                0.5 * PI,
+                            )),
+                            ..default()
+                        })
+                        .insert(Animator::new(leg_tween_r))
+                        .with_children(|parent| {
+                            parent.spawn(PbrBundle {
+                                mesh: leg_mesh_handle.clone(),
+                                material: sphere_material_handle.clone(),
+                                transform: Transform::IDENTITY
+                                    // here X is the vertical height of the leg joint. Set to leg_length because the leg model
+                                    // is aligned upwards so the rotation to horizontal means it's too high.
+                                    .with_translation(Vec3::new(-leg_length, -leg_length, 0.0)),
+                                ..default()
+                            });
+                        });
+
+                    // feet spheres
                     parent
                         .spawn(PbrBundle {
                             mesh: foot_sphere_handle.clone(),
@@ -249,7 +299,7 @@ pub fn setup_caterpillars(
                             transform: Transform::from_xyz(-3.5, -2.0, 0.0),
                             ..default()
                         })
-                        .insert(Animator::new(leg_tween_l));
+                        .insert(Animator::new(foot_tween_l));
                     parent
                         .spawn(PbrBundle {
                             mesh: foot_sphere_handle.clone(),
@@ -257,7 +307,7 @@ pub fn setup_caterpillars(
                             transform: Transform::from_xyz(3.5, -2.0, 0.0),
                             ..default()
                         })
-                        .insert(Animator::new(leg_tween_r));
+                        .insert(Animator::new(foot_tween_r));
                 })
                 .id();
 
