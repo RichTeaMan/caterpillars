@@ -216,13 +216,18 @@ pub fn setup_caterpillars(
 
         let length =
             random::range_i32(config.caterpillar_min_length, config.caterpillar_max_length);
+
+            //let mut leg_tween_progress = 0.9;
+            let mut leg_tween_progress = 0.15;
+            let leg_tween_progress_step = 0.1;
+            info!("loop start");
         for _ in 1..length {
             let caterpillar_part = CaterpillarPart {
                 next: part_entity_option,
             };
 
             // right leg tween
-            let leg_tween_r = Tween::new(
+            let mut leg_tween_r = Tween::new(
                 EaseFunction::QuadraticInOut,
                 Duration::from_millis(750),
                 TransformRotationLens {
@@ -232,6 +237,19 @@ pub fn setup_caterpillars(
             )
             .with_repeat_strategy(RepeatStrategy::MirroredRepeat)
             .with_repeat_count(RepeatCount::Infinite);
+            leg_tween_r.set_progress(leg_tween_progress);
+            leg_tween_r.progress();
+
+            // these cycles seem to restart unexpectedly at 0.4 and ~0.85.
+
+            info!("Setting! {leg_tween_progress}");
+            leg_tween_progress += leg_tween_progress_step;
+            if leg_tween_progress >= 1.0 {
+                info!("RESET! {leg_tween_progress}");
+                leg_tween_progress -= 1.0;
+                //leg_tween_progress = 0.0;
+                info!("DONE! {leg_tween_progress}");
+            }
 
             // foot tween
             let foot_tween_l = Tween::new(
@@ -270,12 +288,7 @@ pub fn setup_caterpillars(
                     // right leg
                     parent
                         .spawn(SpatialBundle {
-                            transform: starting_transform.with_rotation(Quat::from_euler(
-                                EulerRot::XYZ,
-                                0.0,
-                                0.5,
-                                0.5 * PI,
-                            )),
+                            transform: starting_transform,
                             ..default()
                         })
                         .insert(Animator::new(leg_tween_r))
