@@ -228,28 +228,42 @@ pub fn setup_caterpillars(
             };
 
             // right leg tween
-            let mut leg_tween_r = Tween::new(
+            let mut leg_tween_phase_1_r = Tween::new(
                 EaseFunction::QuadraticInOut,
                 Duration::from_millis(750),
                 TransformRotationLens {
-                    start: Quat::from_euler(EulerRot::XYZ, 0.0, -0.5, 0.5 * PI),
-                    end: Quat::from_euler(EulerRot::XYZ, 0.0, 0.5, 0.5 * PI),
+                    start: Quat::from_euler(EulerRot::YXZ, -0.5, 0.0, 0.5 * PI),
+                    end: Quat::from_euler(EulerRot::YXZ, 0.0, 0.0, 0.6 * PI),
                 },
             )
-            .with_repeat_strategy(RepeatStrategy::MirroredRepeat)
-            .with_repeat_count(RepeatCount::Infinite);
-            leg_tween_r.set_progress(leg_tween_progress);
+            //.with_repeat_strategy(RepeatStrategy::MirroredRepeat)
+            //.with_repeat_count(RepeatCount::Infinite)
+            ;
+            let mut leg_tween_phase_2_r = Tween::new(
+                EaseFunction::QuadraticInOut,
+                Duration::from_millis(750),
+                TransformRotationLens {
+                    start: Quat::from_euler(EulerRot::YXZ, -0.0, 0.0, 0.6 * PI),
+                    end: Quat::from_euler(EulerRot::YXZ, -0.5, 0.0, 0.5 * PI),
+                },
+            )
+            //.with_repeat_strategy(RepeatStrategy::MirroredRepeat)
+            //.with_repeat_count(RepeatCount::Infinite)
+            ;
+
+            // tweening sequence looping is still a bourgeoise dream
+            // https://github.com/djeedai/bevy_tweening/issues/16
+
+            // I believe at least some of his will work at some point
+            let mut leg_tween_r = leg_tween_phase_1_r.then(leg_tween_phase_2_r);
             leg_tween_r.progress();
 
-            // these cycles seem to restart unexpectedly at 0.4 and ~0.85.
+            
+            leg_tween_r.set_progress(leg_tween_progress);
 
-            info!("Setting! {leg_tween_progress}");
             leg_tween_progress += leg_tween_progress_step;
             if leg_tween_progress >= 1.0 {
-                info!("RESET! {leg_tween_progress}");
                 leg_tween_progress -= 1.0;
-                //leg_tween_progress = 0.0;
-                info!("DONE! {leg_tween_progress}");
             }
 
             // foot tween
@@ -289,7 +303,7 @@ pub fn setup_caterpillars(
                     // right leg
                     parent
                         .spawn(SpatialBundle {
-                            transform: Transform::from_xyz(0.0, y_height, 0.0),
+                            transform: Transform::IDENTITY,
                             ..default()
                         })
                         .insert(Animator::new(leg_tween_r))
@@ -297,10 +311,11 @@ pub fn setup_caterpillars(
                             parent.spawn(PbrBundle {
                                 mesh: leg_mesh_handle.clone(),
                                 material: sphere_material_handle.clone(),
-                                transform: Transform::IDENTITY
-                                    // here X is the vertical height of the leg joint. Set to leg_length because the leg model
-                                    // is aligned upwards so the rotation to horizontal means it's too high.
-                                    .with_translation(Vec3::new(-leg_length, -leg_length, 0.0)),
+                                transform: Transform::IDENTITY.with_translation(Vec3::new(
+                                    0.0,
+                                    -leg_length,
+                                    0.0,
+                                )),
                                 ..default()
                             });
                         });
