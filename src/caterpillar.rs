@@ -208,8 +208,9 @@ pub fn setup_caterpillars(
     });
 
     for _ in 0..config.starting_caterpillars {
+        let y_height = 3.0;
         let mut starting_vec = random::vec3(config.starting_caterpillar_radius);
-        starting_vec.y = 3.0;
+        starting_vec.y = y_height;
         let starting_transform = Transform::default().with_translation(starting_vec);
 
         let mut part_entity_option: Option<Entity> = Option::None;
@@ -217,10 +218,10 @@ pub fn setup_caterpillars(
         let length =
             random::range_i32(config.caterpillar_min_length, config.caterpillar_max_length);
 
-            //let mut leg_tween_progress = 0.9;
-            let mut leg_tween_progress = 0.15;
-            let leg_tween_progress_step = 0.1;
-            info!("loop start");
+        //let mut leg_tween_progress = 0.9;
+        let mut leg_tween_progress = 0.15;
+        let leg_tween_progress_step = 0.1;
+        info!("loop start");
         for _ in 1..length {
             let caterpillar_part = CaterpillarPart {
                 next: part_entity_option,
@@ -288,7 +289,7 @@ pub fn setup_caterpillars(
                     // right leg
                     parent
                         .spawn(SpatialBundle {
-                            transform: starting_transform,
+                            transform: Transform::from_xyz(0.0, y_height, 0.0),
                             ..default()
                         })
                         .insert(Animator::new(leg_tween_r))
